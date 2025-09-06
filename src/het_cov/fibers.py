@@ -197,7 +197,7 @@ class Fibers():
             with h5py.File(cov_path, 'r') as f:
                 cov = f['cov_calfib_ffsky'][:]
                 shotids_in_cov = f['shotid'][:]
-            return cov
+            return cov, shotids_in_cov
         else:
             self.logger.error(f'Covariance file {cov_path} does not exist.')
             return None
