@@ -164,6 +164,7 @@ class Fibers():
         return cov_all, shotids_in_cov
 
     def save_cov(slef, cov_path, cov_all, shotids_in_cov):
+        self.logger(f'saving cov in {cov_path}')
         with h5py.File(cov_path, 'w') as fw:
             fw['cov_calfib_ffsky'] = cov_all
             fw['shotid'] = shotids_in_cov
