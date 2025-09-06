@@ -9,6 +9,7 @@ from hetdex_api.detections import Detections
 import numpy as np
 import h5py
 import os.path as op
+import time
 
 class Fibers():
     """
@@ -24,22 +25,24 @@ class Fibers():
         """
         self.data_dir = data_dir
         self.save_dir = data_dir
-        self.shotids_list = self.load_shotids_list(data_dir)
+        self.shotids_list = self._load_shotids_list()
 
-    def _load_shotids_list(self, data_dir,):
+    def _load_shotids_list(self):
         """
         Load the shotid list from a h5 file that was generated with 
         `hetdex_api.detections.Detections`
         """
-        if op.exists(op.join(data_dir, 'hdr5_shotid_list.h5')):
-            with h5py.File(op.join(data_dir, 'hdr5_shotid_list.h5'),'r') as f:
+        shotids_path = op.join(self.data_dir, 'hdr5_shotid_list.h5')
+        if op.exists(shotids_path):
+            print(f'loading shotids from {shotids_path}', flush=True)
+            with h5py.File(shotids_path,'r') as f:
                 shotids_list = f['shotid'][:]
         else:
-            print('Shotid list not found, generating it now')
-            shotids_list = self.load_shotids_list()
+            print(f'Shotid list not found, generating it now, an will svave at {shotids_path}', flush=True)
+            shotids_list = self._get_shotids_list(shotids_path)
         return shotids_list
 
-    def load_shotids_list(self):
+    def _get_shotids_list(self, shotids_path):
         """
         Load the shotid list from a h5 file that was generated with 
         `hetdex_api.detections.Detections`
@@ -53,10 +56,10 @@ class Fibers():
         shotids_list = np.unique(detect_table['shotid'])
         del detect_table
         print(f'we have {len(shotids_list)} shotids')
-        with h5py.File(op.join(self.data_dir, 'hdr5_shotid_list.h5'),'w') as fw:
+        with h5py.File(shotids_path,'w') as fw:
             fw['shotid'] = shotids_list
 
-    def _get_fibers_one_shot(shotid):
+    def get_fibers_one_shot(self, shotid):
         """
         Get fiber table for a single shot
         Parameters
@@ -84,20 +87,25 @@ class Fibers():
         for each shotid in a separate h5 file.
         """
         for shotid in self.shotids_list:
-            fib_tab = self._get_fibers_one_shot(shotid)
+            fib_tab = self.get_fibers_one_shot(shotid)
             with h5py.File(op.join(f'calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['calfib_ffsky'] = fib_tab['calfib_ffsky']
             
-    def get_covariance(self):
+    def get_cov(self):
         """
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
-        for shotid in self.shotids_list:
-            fib_spec = self._get_fibers_one_shot(shotid)['calfib_ffsky']
+        for shotid in self.shotids_list[-3::]:
+            start_time = time.time()
+            print(f'working on shotid: {shotid}', flush=True)
+            fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
             cov = np.cov(fib_spec, rowvar=False)
             with h5py.File(op.join(self.save_dir, f'cov_calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['cov_calfib_ffsky'] = cov
+            end_time = time.time()
+            elapsed_time = time.time() - start_time
+            print(f'Time taken for shotid {shotid}: {elapsed_time:.0f} seconds', flush=True)
 
 class dustin_extra_residual_cleaning():
     def __init__():
