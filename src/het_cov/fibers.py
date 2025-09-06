@@ -76,11 +76,11 @@ class Fibers():
         """
         shotids_path = op.join(self.data_dir, 'hdr5_shotid_list.h5')
         if op.exists(shotids_path):
-            self.logger.info(f'loading shotids from {shotids_path}'self.logger.info)
+            self.logger.info(f'loading shotids from {shotids_path}')
             with h5py.File(shotids_path,'r') as f:
                 shotids_list = f['shotid'][:]
         else:
-            self.logger.info(f'Shotid list not found, generating it now, an will svave at {shotids_path}'self.logger.info)
+            self.logger.info(f'Shotid list not found, generating it now, an will svave at {shotids_path}')
             shotids_list = self._get_shotids_list(shotids_path)
         return shotids_list
 
@@ -138,16 +138,42 @@ class Fibers():
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
+        cov_path = op.join(self.save_dir, f'cov_calfib_ffsky.h5')
+        if op.exists(cov_path):
+            cov_all = self.load_cov(cov_path)
+            if cov_all.shape[0] != len(self.shotids_list):
+                self.logger.info(f'Only {cov_all.shape[0]}/{len(self.shotids_list)} shotids in the covariance file, computing the rest')
+            else:
+                return cov_all
+    
         for shotid in self.shotids_list[-3::]:
-            start_time = time.time()
-            self.logger.info(f'working on shotid: {shotid}'self.logger.info)
+            self.logger.info(f'working on shotid: {shotid}')
             fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
-            cov = np.cov(fib_spec, rowvar=False)
-            with h5py.File(op.join(self.save_dir, f'cov_calfib_ffsky_{shotid}.h5'), 'w') as fw:
-                fw['cov_calfib_ffsky'] = cov
-            end_time = time.time()
-            elapsed_time = time.time() - start_time
-            self.logger.info(f'Time taken for shotid {shotid}: {elapsed_time:.0f} seconds'self.logger.info)
+            cov_all= np.append(cov_all, np.cov(fib_spec, rowvar=False), axis=0)
+        with h5py.File(cov_path, 'w') as fw:
+            fw['cov_calfib_ffsky'] = cov_all
+        return cov_all
+
+    def load_cov(self, cov_path):
+        """
+        Load the covariance matrix for a given shotid
+        Parameters
+        ----------
+        shotid: int
+            Shot ID
+        Returns
+        -------
+        cov: np.ndarray
+            Covariance matrix
+        """
+        if op.exists(cov_path):
+            with h5py.File(cov_path, 'r') as f:
+                cov = f['cov_calfib_ffsky'][:]
+            return cov
+        else:
+            self.logger.error(f'Covariance file {cov_path} does not exist.')
+            return None
+
 
 class dustin_extra_residual_cleaning():
     def __init__():
