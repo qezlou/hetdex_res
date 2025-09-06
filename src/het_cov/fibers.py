@@ -142,23 +142,32 @@ class Fibers():
         if op.exists(cov_path):
             cov_all, shotids_in_cov = self.load_cov(cov_path)
             if cov_all.shape[0] != len(self.shotids_list):
-                self.logger.info(f'Only {cov_all.shape[0]}/{len(self.shotids_list)} shotids in the covariance file, computing the rest')
+                shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
             else:
                 return cov_all, shotids_in_cov
-    
-        for shotid in self.shotids_list[-3::]:
+        else:
+             shotids_remaining = self.shotids_list
+        self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
+        for i, shotid in enumerate(shotids_remaining):
             self.logger.info(f'working on shotid: {shotid}')
             fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
             if 'cov_all' in locals():
-                cov_all= np.append(cov_all, np.cov(fib_spec, rowvar=False), axis=0)
+                cov_all= np.append(cov_all, np.cov(fib_spec, rowvar=False)[None,:,:], axis=0)
                 shotids_in_cov = np.append(shotids_in_cov, shotid)
             else:
-                cov_all = np.cov(fib_spec, rowvar=False)[None,:,:,:]
+                cov_all = np.cov(fib_spec, rowvar=False)[None,:,:]
                 shotids_in_cov = np.array([shotid])[None,:]
+            if i%50 ==0:
+                self.save_cov(cov_all, shotids_in_cov)
+        save_cov(cov_all, shotids_in_cov)
+        
+        return cov_all, shotids_in_cov
+
+    def save_cov(slef, cov_all, shotids_in_cov):
         with h5py.File(cov_path, 'w') as fw:
             fw['cov_calfib_ffsky'] = cov_all
             fw['shotid'] = shotids_in_cov
-        return cov_all, shotids_in_cov
+        
 
     def load_cov(self, cov_path):
         """
