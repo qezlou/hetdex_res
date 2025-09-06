@@ -159,12 +159,23 @@ class Fibers():
                 shotids_in_cov = np.array([shotid])[None,:]
             if i%50 ==0:
                 self.save_cov(cov_path, cov_all, shotids_in_cov)
-        save_cov(cov_all, shotids_in_cov)
-        
+        self.save_cov(cov_path, cov_all, shotids_in_cov)
+
         return cov_all, shotids_in_cov
 
-    def save_cov(slef, cov_path, cov_all, shotids_in_cov):
-        self.logger(f'saving cov in {cov_path}')
+    def save_cov(self, cov_path, cov_all, shotids_in_cov):
+        """
+        save the covariance matrix for a given shotid
+        Parameters
+        ----------
+        cpv_path: str
+            Path to save the covariance matrix
+        cov_all: np.ndarray, shape (N_shots, N_wavelengths, N_wavelengths)
+            Covariance matrix
+        shotids_in_cov: np.ndarray, shape (N_shots,)
+            Shot IDs corresponding to the covariance matrix
+        """
+        self.logger.info(f'saving cov in {cov_path}')
         with h5py.File(cov_path, 'w') as fw:
             fw['cov_calfib_ffsky'] = cov_all
             fw['shotid'] = shotids_in_cov
