@@ -158,12 +158,12 @@ class Fibers():
                 cov_all = np.cov(fib_spec, rowvar=False)[None,:,:]
                 shotids_in_cov = np.array([shotid])[None,:]
             if i%50 ==0:
-                self.save_cov(cov_all, shotids_in_cov)
+                self.save_cov(cov_path, cov_all, shotids_in_cov)
         save_cov(cov_all, shotids_in_cov)
         
         return cov_all, shotids_in_cov
 
-    def save_cov(slef, cov_all, shotids_in_cov):
+    def save_cov(slef, cov_path, cov_all, shotids_in_cov):
         with h5py.File(cov_path, 'w') as fw:
             fw['cov_calfib_ffsky'] = cov_all
             fw['shotid'] = shotids_in_cov
