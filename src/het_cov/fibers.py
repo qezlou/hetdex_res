@@ -10,22 +10,64 @@ import numpy as np
 import h5py
 import os.path as op
 import time
+import logging
+import sys
+
 
 class Fibers():
     """
     Getting all "good fibers" spectra for all shots in HDR5
     Should run on both JupyterHub and Compute nodes on Lonestar6
     """
-    def __init__(self, data_dir= '/work2/06536/qezlou/hetdex/data/'):
+    def __init__(self, data_dir= '/work2/06536/qezlou/hetdex/data/', logging_level='INFO'):
         """
         Parameters
         ----------
         data_dir: str
             Directory where the h5 file with shotid list is located
         """
+        self.logger = self.configure_logging(logging_level=logging_level, logger_name='Fibers')
         self.data_dir = data_dir
         self.save_dir = data_dir
         self.shotids_list = self._load_shotids_list()
+
+
+    def configure_logging(self, logging_level='INFO', logger_name='Fibers'):
+        """
+        Set up logging based on the provided logging level in an MPI environment.
+
+        Parameters
+        ----------
+        logging_level : str, optional
+            The logging level (default is 'INFO').
+        logger_name : str, optional
+            The name of the logger (default is 'BaseGal').
+
+        Returns
+        -------
+        logger : logging.Logger
+            Configured logger instance.
+        """
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(logging_level)
+
+        # Create a console handler with flushing
+        console_handler = logging.StreamHandler(sys.stdout)
+
+        # Include Rank, Logger Name, Timestamp, and Message in format
+        formatter = logging.Formatter(
+            f'%(name)s | %(asctime)s | %(levelname)s  |  %(message)s',
+            datefmt='%m/%d/%Y %I:%M:%S %p'
+        )
+        console_handler.setFormatter(formatter)
+
+        # Ensure logs flush immediately
+        console_handler.flush = sys.stdout.flush  
+
+        # Add handler to logger
+        logger.addHandler(console_handler)
+        
+        return logger
 
     def _load_shotids_list(self):
         """
@@ -34,11 +76,11 @@ class Fibers():
         """
         shotids_path = op.join(self.data_dir, 'hdr5_shotid_list.h5')
         if op.exists(shotids_path):
-            print(f'loading shotids from {shotids_path}', flush=True)
+            self.logger.info(f'loading shotids from {shotids_path}'self.logger.info)
             with h5py.File(shotids_path,'r') as f:
                 shotids_list = f['shotid'][:]
         else:
-            print(f'Shotid list not found, generating it now, an will svave at {shotids_path}', flush=True)
+            self.logger.info(f'Shotid list not found, generating it now, an will svave at {shotids_path}'self.logger.info)
             shotids_list = self._get_shotids_list(shotids_path)
         return shotids_list
 
@@ -50,12 +92,12 @@ class Fibers():
         # Get shot_ids for HDR5
         # NOTE: This is a bit slow
         detects_obj = Detections(loadtable=True)
-        print(detects_obj.survey)
+        self.logger.info(detects_obj.survey)
         detect_table = detects_obj.return_astropy_table()
         del detects_obj
         shotids_list = np.unique(detect_table['shotid'])
         del detect_table
-        print(f'we have {len(shotids_list)} shotids')
+        self.logger.info(f'we have {len(shotids_list)} shotids')
         with h5py.File(shotids_path,'w') as fw:
             fw['shotid'] = shotids_list
 
@@ -76,9 +118,9 @@ class Fibers():
         fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
         fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
         # Only keep good fibers, flag=True
-        print(f'Total fibers: {len(fib_tab)}')
+        self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
-        print(f'Good fibers: {len(fib_tab)}')
+        self.logger.info(f'Good fibers: {len(fib_tab)}')
         return fib_tab
 
     def get_fibers(self):
@@ -98,14 +140,14 @@ class Fibers():
         """
         for shotid in self.shotids_list[-3::]:
             start_time = time.time()
-            print(f'working on shotid: {shotid}', flush=True)
+            self.logger.info(f'working on shotid: {shotid}'self.logger.info)
             fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
             cov = np.cov(fib_spec, rowvar=False)
             with h5py.File(op.join(self.save_dir, f'cov_calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['cov_calfib_ffsky'] = cov
             end_time = time.time()
             elapsed_time = time.time() - start_time
-            print(f'Time taken for shotid {shotid}: {elapsed_time:.0f} seconds', flush=True)
+            self.logger.info(f'Time taken for shotid {shotid}: {elapsed_time:.0f} seconds'self.logger.info)
 
 class dustin_extra_residual_cleaning():
     def __init__():
@@ -119,7 +161,7 @@ class dustin_extra_residual_cleaning():
         """
         # Loading the detection table is slow
         detects_obj = Detections(loadtable=True)
-        print(detects_obj.survey)
+        self.logger.info(detects_obj.survey)
         detect_table = detects_obj.return_astropy_table()
         ind_detect_table=[]
         # This loops over 1.6e6 sources, so very slow
@@ -127,7 +169,7 @@ class dustin_extra_residual_cleaning():
             ind = np.where(detect_table['detectid'] == idet)
             ind_detect_table.append(ind)
         det = detects_table[ind_detect_table]['shotid', 'fwhm', 'throughput']
-        print(f'Total sources {detect_ids.size}, overlap with detect_table {id_detect_table.size}')
+        self.logger.info(f'Total sources {detect_ids.size}, overlap with detect_table {id_detect_table.size}')
         detects.hdfile.close()
         return det
     
@@ -173,7 +215,7 @@ class dustin_extra_residual_cleaning():
         """
         # Loading the detection table is slow
         detects_obj = Detections(loadtable=True)
-        print(detects_obj.survey)
+        self.logger.info(detects_obj.survey)
         detect_table = detects_obj.return_astropy_table()
         ind_detect_table=[]
         # This loops over 1.6e6 sources, so very slow
@@ -181,7 +223,7 @@ class dustin_extra_residual_cleaning():
             ind = np.where(detect_table['detectid'] == idet)
             ind_detect_table.append(ind)
         det = detects_table[ind_detect_table]['shotid', 'fwhm', 'throughput']
-        print(f'Total sources {detect_ids.size}, overlap with detect_table {id_detect_table.size}')
+        self.logger.info(f'Total sources {detect_ids.size}, overlap with detect_table {id_detect_table.size}')
         detects.hdfile.close()
         return det
     
