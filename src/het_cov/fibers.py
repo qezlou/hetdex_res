@@ -157,7 +157,8 @@ class Fibers():
             else:
                 cov_all = np.cov(fib_spec, rowvar=False)[None,:,:]
                 shotids_in_cov = np.array([shotid])[None,:]
-            if i%50 ==0:
+            if i%10 ==0:
+                self.logger.info(f'progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
                 self.save_cov(cov_path, cov_all, shotids_in_cov)
         self.save_cov(cov_path, cov_all, shotids_in_cov)
 
