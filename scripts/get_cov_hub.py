@@ -8,7 +8,7 @@ if 'JUPYTERHUB_USER' in os.environ:
     import fibers
     data_dir = '/home/jovyan/work/hetdex/data/'
 else:
-    import het_cov import fibers
+    from het_cov import fibers
     data_dir = '/work/06536/qezlou/hetdex/data/'
 
 
