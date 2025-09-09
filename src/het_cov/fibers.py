@@ -124,10 +124,11 @@ class Fibers():
         fib_tab = fib_tab[fib_tab['flag']==True]
 
         # 3. mask the bad pixels for each fiber. this includes cosmic rays.
-        fib_tab['calfib_ffsky'][fib_tab['calfibe'] <= 0] = np.nan
+        mask_bad_pixs = fib_tab['calfibe'] <= 0
+        fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
         fib_tab.remove_column('calfibe')
-        
-        self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(np.isnan(fib_tab['calfib_ffsky']))/fib_tab['calfib_ffsky'].size}')
+        self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}')
+        del mask_bad_pixs
 
         #4.  Remove strong continuum sources, from Mahan's code and Elixer
         wl = np.linspace(3470,5540,1036)
@@ -139,7 +140,7 @@ class Fibers():
         mask_zone5 = (5090 < wl_vac) & (wl_vac < 5500)
 
         medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
-        # Remove the fiber even if one of the regions has a high continuum
+        ## Remove the fiber even if one of the regions has a high continuum
         valid_mask = np.all((-0.02 < medians) & (medians < 0.05), axis=0)
         self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
         fib_tab = fib_tab[valid_mask]
