@@ -161,7 +161,7 @@ class Fibers():
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
-        cov_path = op.join(self.save_dir, f'cov_calfib_ffsky.h5')
+        cov_path = op.join(self.save_dir, f'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5')
         if op.exists(cov_path):
             cov_all, shotids_in_cov = self.load_cov(cov_path)
             if cov_all.shape[0] != len(self.shotids_list):
