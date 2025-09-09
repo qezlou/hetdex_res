@@ -113,7 +113,7 @@ class Fibers():
         fib_tab: astropy Table
             Table with fiber_id, calfib_ffsky and flag (True for good fibers)
         """
-        fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',verbose=False, add_rescor=False)['fiber_id','calfib_ffsky'] # I won't use  'calfibe' 
+        fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',verbose=False, add_rescor=False)['fiber_id','calfib_ffsky','calfibe']
         F = FiberIndex(survey='hdr5') 
         fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
         fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
@@ -121,6 +121,11 @@ class Fibers():
         self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
         self.logger.info(f'Good fibers: {len(fib_tab)}')
+
+        # mask the bad pixels for each fiber
+        fib_tab[fib_tab['calfibe'] < 0]['calfib_ffsky'] = np.nan
+        fib_tab.remove_column('calfibe')
+
         return fib_tab
 
     def get_fibers(self):
