@@ -1,0 +1,544 @@
+c304-005.ls6.tacc.utexas.edu
+/work/06536/qezlou/hetdex/packs/private-het-data/scripts
+Sun Sep  7 16:41:14 CDT 2025
+Fibers | 09/07/2025 04:41:17 PM | INFO  |  loading shotids from /work/06536/qezlou/hetdex/data/hdr5_shotid_list.h5
+Fibers | 09/07/2025 04:41:19 PM | INFO  |  168 shotids remaining to compute covariance for
+Fibers | 09/07/2025 04:41:19 PM | INFO  |  working on shotid: 20240527014
+Fibers | 09/07/2025 04:41:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:41:31 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 04:41:34 PM | INFO  |  progress 641/808
+Fibers | 09/07/2025 04:41:34 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 04:41:39 PM | INFO  |  working on shotid: 20240527015
+Fibers | 09/07/2025 04:42:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:42:08 PM | INFO  |  Good fibers: 96867
+Fibers | 09/07/2025 04:42:11 PM | INFO  |  working on shotid: 20240527016
+Fibers | 09/07/2025 04:42:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:42:29 PM | INFO  |  Good fibers: 96531
+Fibers | 09/07/2025 04:42:32 PM | INFO  |  working on shotid: 20240529006
+Fibers | 09/07/2025 04:43:07 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:43:07 PM | INFO  |  Good fibers: 98877
+Fibers | 09/07/2025 04:43:10 PM | INFO  |  working on shotid: 20240529007
+Fibers | 09/07/2025 04:43:35 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:43:35 PM | INFO  |  Good fibers: 98541
+Fibers | 09/07/2025 04:43:38 PM | INFO  |  working on shotid: 20240529008
+Fibers | 09/07/2025 04:43:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:43:58 PM | INFO  |  Good fibers: 95859
+Fibers | 09/07/2025 04:44:01 PM | INFO  |  working on shotid: 20240529011
+Fibers | 09/07/2025 04:44:22 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:44:22 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 04:44:25 PM | INFO  |  working on shotid: 20240530011
+Fibers | 09/07/2025 04:44:48 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:44:48 PM | INFO  |  Good fibers: 93714
+Fibers | 09/07/2025 04:44:51 PM | INFO  |  working on shotid: 20240530012
+Fibers | 09/07/2025 04:45:04 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:45:04 PM | INFO  |  Good fibers: 97241
+Fibers | 09/07/2025 04:45:07 PM | INFO  |  working on shotid: 20240530013
+Fibers | 09/07/2025 04:45:26 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:45:26 PM | INFO  |  Good fibers: 98877
+Fibers | 09/07/2025 04:45:29 PM | INFO  |  working on shotid: 20240530014
+Fibers | 09/07/2025 04:45:56 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:45:56 PM | INFO  |  Good fibers: 97203
+Fibers | 09/07/2025 04:45:59 PM | INFO  |  progress 651/808
+Fibers | 09/07/2025 04:45:59 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 04:46:04 PM | INFO  |  working on shotid: 20240530019
+Fibers | 09/07/2025 04:46:30 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:46:31 PM | INFO  |  Good fibers: 94963
+Fibers | 09/07/2025 04:46:33 PM | INFO  |  working on shotid: 20240530020
+Fibers | 09/07/2025 04:46:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:46:58 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 04:47:01 PM | INFO  |  working on shotid: 20240531014
+Fibers | 09/07/2025 04:47:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:47:29 PM | INFO  |  Good fibers: 95184
+Fibers | 09/07/2025 04:47:32 PM | INFO  |  working on shotid: 20240531015
+Fibers | 09/07/2025 04:48:02 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:48:02 PM | INFO  |  Good fibers: 96212
+Fibers | 09/07/2025 04:48:05 PM | INFO  |  working on shotid: 20240531016
+Fibers | 09/07/2025 04:48:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:48:33 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 04:48:36 PM | INFO  |  working on shotid: 20240531017
+Fibers | 09/07/2025 04:48:56 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:48:56 PM | INFO  |  Good fibers: 98877
+Fibers | 09/07/2025 04:48:59 PM | INFO  |  working on shotid: 20240531020
+Fibers | 09/07/2025 04:49:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:49:31 PM | INFO  |  Good fibers: 97551
+Fibers | 09/07/2025 04:49:34 PM | INFO  |  working on shotid: 20240531021
+Fibers | 09/07/2025 04:49:56 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:49:56 PM | INFO  |  Good fibers: 90089
+Fibers | 09/07/2025 04:49:59 PM | INFO  |  working on shotid: 20240531022
+Fibers | 09/07/2025 04:50:24 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:50:24 PM | INFO  |  Good fibers: 98541
+Fibers | 09/07/2025 04:50:27 PM | INFO  |  working on shotid: 20240601002
+Fibers | 09/07/2025 04:51:05 PM | INFO  |  Total fibers: 104160
+Fibers | 09/07/2025 04:51:05 PM | INFO  |  Good fibers: 96537
+Fibers | 09/07/2025 04:51:08 PM | INFO  |  progress 661/808
+Fibers | 09/07/2025 04:51:08 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 04:51:13 PM | INFO  |  working on shotid: 20240601003
+Fibers | 09/07/2025 04:51:38 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:51:38 PM | INFO  |  Good fibers: 94478
+Fibers | 09/07/2025 04:51:41 PM | INFO  |  working on shotid: 20240601004
+Fibers | 09/07/2025 04:52:12 PM | INFO  |  Total fibers: 104384
+Fibers | 09/07/2025 04:52:12 PM | INFO  |  Good fibers: 96531
+Fibers | 09/07/2025 04:52:15 PM | INFO  |  working on shotid: 20240601005
+Fibers | 09/07/2025 04:52:41 PM | INFO  |  Total fibers: 104384
+Fibers | 09/07/2025 04:52:41 PM | INFO  |  Good fibers: 95184
+Fibers | 09/07/2025 04:52:44 PM | INFO  |  working on shotid: 20240601007
+Fibers | 09/07/2025 04:53:07 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:53:07 PM | INFO  |  Good fibers: 96528
+Fibers | 09/07/2025 04:53:09 PM | INFO  |  working on shotid: 20240601008
+Fibers | 09/07/2025 04:53:34 PM | INFO  |  Total fibers: 104384
+Fibers | 09/07/2025 04:53:34 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 04:53:37 PM | INFO  |  working on shotid: 20240601009
+Fibers | 09/07/2025 04:54:00 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:54:00 PM | INFO  |  Good fibers: 95856
+Fibers | 09/07/2025 04:54:03 PM | INFO  |  working on shotid: 20240601010
+Fibers | 09/07/2025 04:54:27 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:54:27 PM | INFO  |  Good fibers: 94851
+Fibers | 09/07/2025 04:54:30 PM | INFO  |  working on shotid: 20240601011
+Fibers | 09/07/2025 04:54:54 PM | INFO  |  Total fibers: 104384
+Fibers | 09/07/2025 04:54:54 PM | INFO  |  Good fibers: 94182
+Fibers | 09/07/2025 04:54:57 PM | INFO  |  working on shotid: 20240603013
+Fibers | 09/07/2025 04:55:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:55:29 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 04:55:32 PM | INFO  |  working on shotid: 20240603016
+Fibers | 09/07/2025 04:55:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:55:58 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 04:56:01 PM | INFO  |  progress 671/808
+Fibers | 09/07/2025 04:56:01 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 04:56:06 PM | INFO  |  working on shotid: 20240603017
+Fibers | 09/07/2025 04:56:34 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:56:34 PM | INFO  |  Good fibers: 95193
+Fibers | 09/07/2025 04:56:37 PM | INFO  |  working on shotid: 20240603018
+Fibers | 09/07/2025 04:57:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:57:08 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 04:57:11 PM | INFO  |  working on shotid: 20240603019
+Fibers | 09/07/2025 04:57:39 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:57:39 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 04:57:42 PM | INFO  |  working on shotid: 20240603020
+Fibers | 09/07/2025 04:58:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:58:08 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 04:58:11 PM | INFO  |  working on shotid: 20240603021
+Fibers | 09/07/2025 04:58:35 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:58:35 PM | INFO  |  Good fibers: 94854
+Fibers | 09/07/2025 04:58:38 PM | INFO  |  working on shotid: 20240603022
+Fibers | 09/07/2025 04:59:10 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:59:10 PM | INFO  |  Good fibers: 94400
+Fibers | 09/07/2025 04:59:13 PM | INFO  |  working on shotid: 20240604006
+Fibers | 09/07/2025 04:59:35 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 04:59:35 PM | INFO  |  Good fibers: 97200
+Fibers | 09/07/2025 04:59:38 PM | INFO  |  working on shotid: 20240604007
+Fibers | 09/07/2025 05:00:01 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:00:01 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:00:04 PM | INFO  |  working on shotid: 20240604008
+Fibers | 09/07/2025 05:00:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:00:30 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:00:33 PM | INFO  |  working on shotid: 20240604011
+Fibers | 09/07/2025 05:00:54 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:00:54 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 05:00:57 PM | INFO  |  progress 681/808
+Fibers | 09/07/2025 05:00:57 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:01:03 PM | INFO  |  working on shotid: 20240604012
+Fibers | 09/07/2025 05:01:32 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:01:32 PM | INFO  |  Good fibers: 96797
+Fibers | 09/07/2025 05:01:35 PM | INFO  |  working on shotid: 20240604013
+Fibers | 09/07/2025 05:01:56 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:01:56 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:01:59 PM | INFO  |  working on shotid: 20240604014
+Fibers | 09/07/2025 05:02:20 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:02:20 PM | INFO  |  Good fibers: 94644
+Fibers | 09/07/2025 05:02:23 PM | INFO  |  working on shotid: 20240604015
+Fibers | 09/07/2025 05:02:54 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:02:54 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 05:02:57 PM | INFO  |  working on shotid: 20240604016
+Fibers | 09/07/2025 05:03:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:03:31 PM | INFO  |  Good fibers: 96134
+Fibers | 09/07/2025 05:03:34 PM | INFO  |  working on shotid: 20240604017
+Fibers | 09/07/2025 05:03:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:03:58 PM | INFO  |  Good fibers: 93827
+Fibers | 09/07/2025 05:04:01 PM | INFO  |  working on shotid: 20240604018
+Fibers | 09/07/2025 05:04:28 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:04:28 PM | INFO  |  Good fibers: 95184
+Fibers | 09/07/2025 05:04:31 PM | INFO  |  working on shotid: 20240605006
+Fibers | 09/07/2025 05:05:04 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:05:04 PM | INFO  |  Good fibers: 97536
+Fibers | 09/07/2025 05:05:07 PM | INFO  |  working on shotid: 20240605007
+Fibers | 09/07/2025 05:05:32 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:05:32 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:05:35 PM | INFO  |  working on shotid: 20240605015
+Fibers | 09/07/2025 05:06:00 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:06:01 PM | INFO  |  Good fibers: 95193
+Fibers | 09/07/2025 05:06:03 PM | INFO  |  progress 691/808
+Fibers | 09/07/2025 05:06:03 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:06:09 PM | INFO  |  working on shotid: 20240605016
+Fibers | 09/07/2025 05:06:30 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:06:30 PM | INFO  |  Good fibers: 97872
+Fibers | 09/07/2025 05:06:33 PM | INFO  |  working on shotid: 20240605017
+Fibers | 09/07/2025 05:07:02 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:07:02 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 05:07:05 PM | INFO  |  working on shotid: 20240605018
+Fibers | 09/07/2025 05:07:27 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:07:27 PM | INFO  |  Good fibers: 96189
+Fibers | 09/07/2025 05:07:30 PM | INFO  |  working on shotid: 20240605019
+Fibers | 09/07/2025 05:07:52 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:07:52 PM | INFO  |  Good fibers: 95520
+Fibers | 09/07/2025 05:07:55 PM | INFO  |  working on shotid: 20240607006
+Fibers | 09/07/2025 05:08:18 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:08:19 PM | INFO  |  Good fibers: 94854
+Fibers | 09/07/2025 05:08:21 PM | INFO  |  working on shotid: 20240607007
+Fibers | 09/07/2025 05:08:48 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:08:48 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:08:51 PM | INFO  |  working on shotid: 20240607008
+Fibers | 09/07/2025 05:09:14 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:09:14 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:09:17 PM | INFO  |  working on shotid: 20240607009
+Fibers | 09/07/2025 05:09:38 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:09:38 PM | INFO  |  Good fibers: 95292
+Fibers | 09/07/2025 05:09:41 PM | INFO  |  working on shotid: 20240607010
+Fibers | 09/07/2025 05:10:01 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:10:01 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:10:04 PM | INFO  |  working on shotid: 20240607011
+Fibers | 09/07/2025 05:10:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:10:31 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:10:34 PM | INFO  |  progress 701/808
+Fibers | 09/07/2025 05:10:34 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:10:40 PM | INFO  |  working on shotid: 20240608006
+Fibers | 09/07/2025 05:11:04 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:11:04 PM | INFO  |  Good fibers: 94509
+Fibers | 09/07/2025 05:11:07 PM | INFO  |  working on shotid: 20240609008
+Fibers | 09/07/2025 05:11:38 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:11:38 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 05:11:41 PM | INFO  |  working on shotid: 20240609010
+Fibers | 09/07/2025 05:12:24 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:12:24 PM | INFO  |  Good fibers: 96528
+Fibers | 09/07/2025 05:12:27 PM | INFO  |  working on shotid: 20240611009
+Fibers | 09/07/2025 05:12:59 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:12:59 PM | INFO  |  Good fibers: 95859
+Fibers | 09/07/2025 05:13:02 PM | INFO  |  working on shotid: 20240611010
+Fibers | 09/07/2025 05:13:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:13:33 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:13:36 PM | INFO  |  working on shotid: 20240611011
+Fibers | 09/07/2025 05:14:11 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:14:11 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:14:14 PM | INFO  |  working on shotid: 20240611012
+Fibers | 09/07/2025 05:14:42 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:14:42 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:14:45 PM | INFO  |  working on shotid: 20240611013
+Fibers | 09/07/2025 05:15:19 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:15:19 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:15:22 PM | INFO  |  working on shotid: 20240611014
+Fibers | 09/07/2025 05:15:54 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:15:54 PM | INFO  |  Good fibers: 96867
+Fibers | 09/07/2025 05:15:57 PM | INFO  |  working on shotid: 20240612008
+Fibers | 09/07/2025 05:16:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:16:31 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 05:16:34 PM | INFO  |  progress 711/808
+Fibers | 09/07/2025 05:16:34 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:16:40 PM | INFO  |  working on shotid: 20240612009
+Fibers | 09/07/2025 05:17:07 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:17:07 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:17:10 PM | INFO  |  working on shotid: 20240613009
+Fibers | 09/07/2025 05:17:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:17:33 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:17:36 PM | INFO  |  working on shotid: 20240613010
+Fibers | 09/07/2025 05:18:04 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:18:04 PM | INFO  |  Good fibers: 91444
+Fibers | 09/07/2025 05:18:07 PM | INFO  |  working on shotid: 20240613011
+Fibers | 09/07/2025 05:18:31 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:18:32 PM | INFO  |  Good fibers: 92396
+Fibers | 09/07/2025 05:18:34 PM | INFO  |  working on shotid: 20240613012
+Fibers | 09/07/2025 05:19:06 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:19:06 PM | INFO  |  Good fibers: 95859
+Fibers | 09/07/2025 05:19:09 PM | INFO  |  working on shotid: 20240614010
+Fibers | 09/07/2025 05:19:42 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:19:42 PM | INFO  |  Good fibers: 94854
+Fibers | 09/07/2025 05:19:45 PM | INFO  |  working on shotid: 20240614011
+Fibers | 09/07/2025 05:20:09 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:20:09 PM | INFO  |  Good fibers: 94182
+Fibers | 09/07/2025 05:20:12 PM | INFO  |  working on shotid: 20240614012
+Fibers | 09/07/2025 05:20:36 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:20:36 PM | INFO  |  Good fibers: 95856
+Fibers | 09/07/2025 05:20:39 PM | INFO  |  working on shotid: 20240616017
+Fibers | 09/07/2025 05:21:03 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:21:03 PM | INFO  |  Good fibers: 95859
+Fibers | 09/07/2025 05:21:06 PM | INFO  |  working on shotid: 20240627006
+Fibers | 09/07/2025 05:21:32 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:21:32 PM | INFO  |  Good fibers: 95181
+Fibers | 09/07/2025 05:21:35 PM | INFO  |  progress 721/808
+Fibers | 09/07/2025 05:21:35 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:21:40 PM | INFO  |  working on shotid: 20240627007
+Fibers | 09/07/2025 05:22:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:22:08 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:22:11 PM | INFO  |  working on shotid: 20240627008
+Fibers | 09/07/2025 05:22:43 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:22:43 PM | INFO  |  Good fibers: 95856
+Fibers | 09/07/2025 05:22:46 PM | INFO  |  working on shotid: 20240628008
+Fibers | 09/07/2025 05:23:18 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:23:18 PM | INFO  |  Good fibers: 0
+Fibers | 09/07/2025 05:23:19 PM | INFO  |  working on shotid: 20240629008
+Fibers | 09/07/2025 05:23:41 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:23:41 PM | INFO  |  Good fibers: 94671
+Fibers | 09/07/2025 05:23:44 PM | INFO  |  working on shotid: 20240629009
+Fibers | 09/07/2025 05:24:13 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:24:13 PM | INFO  |  Good fibers: 95856
+Fibers | 09/07/2025 05:24:16 PM | INFO  |  working on shotid: 20240629010
+Fibers | 09/07/2025 05:24:48 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:24:49 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:24:52 PM | INFO  |  working on shotid: 20240629011
+Fibers | 09/07/2025 05:25:18 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:25:18 PM | INFO  |  Good fibers: 94173
+Fibers | 09/07/2025 05:25:21 PM | INFO  |  working on shotid: 20240629012
+Fibers | 09/07/2025 05:25:43 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:25:43 PM | INFO  |  Good fibers: 96528
+Fibers | 09/07/2025 05:25:46 PM | INFO  |  working on shotid: 20240629013
+Fibers | 09/07/2025 05:26:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:26:08 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 05:26:11 PM | INFO  |  working on shotid: 20240630014
+Fibers | 09/07/2025 05:26:39 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:26:39 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:26:42 PM | INFO  |  progress 731/808
+Fibers | 09/07/2025 05:26:42 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:26:48 PM | INFO  |  working on shotid: 20240630015
+Fibers | 09/07/2025 05:27:15 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:27:15 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:27:18 PM | INFO  |  working on shotid: 20240701015
+Fibers | 09/07/2025 05:27:47 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:27:48 PM | INFO  |  Good fibers: 97872
+Fibers | 09/07/2025 05:27:51 PM | INFO  |  working on shotid: 20240701016
+Fibers | 09/07/2025 05:28:17 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:28:17 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:28:20 PM | INFO  |  working on shotid: 20240701017
+Fibers | 09/07/2025 05:28:46 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:28:46 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:28:49 PM | INFO  |  working on shotid: 20240701018
+Fibers | 09/07/2025 05:29:14 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:29:14 PM | INFO  |  Good fibers: 95856
+Fibers | 09/07/2025 05:29:17 PM | INFO  |  working on shotid: 20240701019
+Fibers | 09/07/2025 05:29:38 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:29:38 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:29:41 PM | INFO  |  working on shotid: 20240701020
+Fibers | 09/07/2025 05:30:12 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:30:12 PM | INFO  |  Good fibers: 95517
+Fibers | 09/07/2025 05:30:15 PM | INFO  |  working on shotid: 20240701021
+Fibers | 09/07/2025 05:30:44 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:30:44 PM | INFO  |  Good fibers: 97166
+Fibers | 09/07/2025 05:30:47 PM | INFO  |  working on shotid: 20240702009
+Fibers | 09/07/2025 05:31:12 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:31:12 PM | INFO  |  Good fibers: 96192
+Fibers | 09/07/2025 05:31:15 PM | INFO  |  working on shotid: 20240702010
+Fibers | 09/07/2025 05:31:38 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:31:38 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:31:41 PM | INFO  |  progress 741/808
+Fibers | 09/07/2025 05:31:41 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:31:46 PM | INFO  |  working on shotid: 20240702011
+Fibers | 09/07/2025 05:32:17 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:32:17 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:32:20 PM | INFO  |  working on shotid: 20240702012
+Fibers | 09/07/2025 05:32:51 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:32:51 PM | INFO  |  Good fibers: 96195
+Fibers | 09/07/2025 05:32:54 PM | INFO  |  working on shotid: 20240702013
+Fibers | 09/07/2025 05:33:14 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:33:14 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:33:17 PM | INFO  |  working on shotid: 20240702014
+Fibers | 09/07/2025 05:33:43 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:33:43 PM | INFO  |  Good fibers: 96192
+Fibers | 09/07/2025 05:33:46 PM | INFO  |  working on shotid: 20240702015
+Fibers | 09/07/2025 05:34:11 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:34:11 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 05:34:14 PM | INFO  |  working on shotid: 20240703015
+Fibers | 09/07/2025 05:34:47 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:34:47 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:34:50 PM | INFO  |  working on shotid: 20240703016
+Fibers | 09/07/2025 05:35:27 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:35:27 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:35:30 PM | INFO  |  working on shotid: 20240703017
+Fibers | 09/07/2025 05:35:55 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:35:55 PM | INFO  |  Good fibers: 96528
+Fibers | 09/07/2025 05:35:58 PM | INFO  |  working on shotid: 20240703018
+Fibers | 09/07/2025 05:36:22 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:36:22 PM | INFO  |  Good fibers: 95187
+Fibers | 09/07/2025 05:36:25 PM | INFO  |  working on shotid: 20240704007
+Fibers | 09/07/2025 05:36:53 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:36:53 PM | INFO  |  Good fibers: 98205
+Fibers | 09/07/2025 05:36:56 PM | INFO  |  progress 751/808
+Fibers | 09/07/2025 05:36:56 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:37:01 PM | INFO  |  working on shotid: 20240704008
+Fibers | 09/07/2025 05:37:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:37:33 PM | INFO  |  Good fibers: 95654
+Fibers | 09/07/2025 05:37:36 PM | INFO  |  working on shotid: 20240704009
+Fibers | 09/07/2025 05:38:01 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:38:01 PM | INFO  |  Good fibers: 95526
+Fibers | 09/07/2025 05:38:04 PM | INFO  |  working on shotid: 20240707011
+Fibers | 09/07/2025 05:38:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:38:29 PM | INFO  |  Good fibers: 96528
+Fibers | 09/07/2025 05:38:32 PM | INFO  |  working on shotid: 20240707012
+Fibers | 09/07/2025 05:39:03 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:39:03 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 05:39:06 PM | INFO  |  working on shotid: 20240707013
+Fibers | 09/07/2025 05:39:30 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:39:30 PM | INFO  |  Good fibers: 0
+Fibers | 09/07/2025 05:39:31 PM | INFO  |  working on shotid: 20240707014
+Fibers | 09/07/2025 05:39:57 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:39:57 PM | INFO  |  Good fibers: 95520
+Fibers | 09/07/2025 05:40:00 PM | INFO  |  working on shotid: 20240707015
+Fibers | 09/07/2025 05:40:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:40:29 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:40:32 PM | INFO  |  working on shotid: 20240707016
+Fibers | 09/07/2025 05:40:57 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:40:57 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:41:00 PM | INFO  |  working on shotid: 20240707017
+Fibers | 09/07/2025 05:41:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:41:29 PM | INFO  |  Good fibers: 95865
+Fibers | 09/07/2025 05:41:32 PM | INFO  |  working on shotid: 20240707018
+Fibers | 09/07/2025 05:41:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:41:58 PM | INFO  |  Good fibers: 97200
+Fibers | 09/07/2025 05:42:02 PM | INFO  |  progress 761/808
+Fibers | 09/07/2025 05:42:02 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:42:07 PM | INFO  |  working on shotid: 20240708012
+Fibers | 09/07/2025 05:42:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:42:33 PM | INFO  |  Good fibers: 94851
+Fibers | 09/07/2025 05:42:36 PM | INFO  |  working on shotid: 20240708013
+Fibers | 09/07/2025 05:43:02 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:43:02 PM | INFO  |  Good fibers: 96198
+Fibers | 09/07/2025 05:43:05 PM | INFO  |  working on shotid: 20240708014
+Fibers | 09/07/2025 05:43:41 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:43:41 PM | INFO  |  Good fibers: 94185
+Fibers | 09/07/2025 05:43:44 PM | INFO  |  working on shotid: 20240708015
+Fibers | 09/07/2025 05:44:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:44:08 PM | INFO  |  Good fibers: 93168
+Fibers | 09/07/2025 05:44:11 PM | INFO  |  working on shotid: 20240708016
+Fibers | 09/07/2025 05:44:36 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:44:36 PM | INFO  |  Good fibers: 96537
+Fibers | 09/07/2025 05:44:39 PM | INFO  |  working on shotid: 20240708017
+Fibers | 09/07/2025 05:45:01 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:45:02 PM | INFO  |  Good fibers: 96334
+Fibers | 09/07/2025 05:45:05 PM | INFO  |  working on shotid: 20240708018
+Fibers | 09/07/2025 05:45:29 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:45:29 PM | INFO  |  Good fibers: 94722
+Fibers | 09/07/2025 05:45:32 PM | INFO  |  working on shotid: 20240709007
+Fibers | 09/07/2025 05:45:57 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:45:57 PM | INFO  |  Good fibers: 97203
+Fibers | 09/07/2025 05:46:00 PM | INFO  |  working on shotid: 20240709008
+Fibers | 09/07/2025 05:46:25 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:46:25 PM | INFO  |  Good fibers: 97212
+Fibers | 09/07/2025 05:46:28 PM | INFO  |  working on shotid: 20240709009
+Fibers | 09/07/2025 05:47:00 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:47:00 PM | INFO  |  Good fibers: 94759
+Fibers | 09/07/2025 05:47:03 PM | INFO  |  progress 771/808
+Fibers | 09/07/2025 05:47:03 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:47:09 PM | INFO  |  working on shotid: 20240710008
+Fibers | 09/07/2025 05:47:37 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:47:37 PM | INFO  |  Good fibers: 96195
+Fibers | 09/07/2025 05:47:40 PM | INFO  |  working on shotid: 20240710009
+Fibers | 09/07/2025 05:48:10 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:48:10 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:48:13 PM | INFO  |  working on shotid: 20240710010
+Fibers | 09/07/2025 05:48:51 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:48:51 PM | INFO  |  Good fibers: 95190
+Fibers | 09/07/2025 05:48:54 PM | INFO  |  working on shotid: 20240710011
+Fibers | 09/07/2025 05:49:25 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:49:25 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 05:49:28 PM | INFO  |  working on shotid: 20240710012
+Fibers | 09/07/2025 05:50:02 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:50:02 PM | INFO  |  Good fibers: 97539
+Fibers | 09/07/2025 05:50:05 PM | INFO  |  working on shotid: 20240711009
+Fibers | 09/07/2025 05:50:37 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:50:37 PM | INFO  |  Good fibers: 96546
+Fibers | 09/07/2025 05:50:40 PM | INFO  |  working on shotid: 20240711010
+Fibers | 09/07/2025 05:51:10 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:51:10 PM | INFO  |  Good fibers: 96195
+Fibers | 09/07/2025 05:51:13 PM | INFO  |  working on shotid: 20240711011
+Fibers | 09/07/2025 05:51:49 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:51:49 PM | INFO  |  Good fibers: 96198
+Fibers | 09/07/2025 05:51:52 PM | INFO  |  working on shotid: 20240711012
+Fibers | 09/07/2025 05:52:24 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:52:24 PM | INFO  |  Good fibers: 96531
+Fibers | 09/07/2025 05:52:27 PM | INFO  |  working on shotid: 20240712010
+Fibers | 09/07/2025 05:52:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:52:58 PM | INFO  |  Good fibers: 95859
+Fibers | 09/07/2025 05:53:01 PM | INFO  |  progress 781/808
+Fibers | 09/07/2025 05:53:01 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:53:07 PM | INFO  |  working on shotid: 20240712011
+Fibers | 09/07/2025 05:53:48 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:53:48 PM | INFO  |  Good fibers: 95190
+Fibers | 09/07/2025 05:53:51 PM | INFO  |  working on shotid: 20240713011
+Fibers | 09/07/2025 05:54:15 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:54:15 PM | INFO  |  Good fibers: 96525
+Fibers | 09/07/2025 05:54:18 PM | INFO  |  working on shotid: 20240725012
+Fibers | 09/07/2025 05:54:44 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:54:44 PM | INFO  |  Good fibers: 94861
+Fibers | 09/07/2025 05:54:47 PM | INFO  |  working on shotid: 20240725013
+Fibers | 09/07/2025 05:55:27 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:55:27 PM | INFO  |  Good fibers: 93683
+Fibers | 09/07/2025 05:55:30 PM | INFO  |  working on shotid: 20240726007
+Fibers | 09/07/2025 05:55:58 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:55:59 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:56:02 PM | INFO  |  working on shotid: 20240726008
+Fibers | 09/07/2025 05:56:34 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:56:34 PM | INFO  |  Good fibers: 0
+Fibers | 09/07/2025 05:56:35 PM | INFO  |  working on shotid: 20240726009
+Fibers | 09/07/2025 05:57:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:57:08 PM | INFO  |  Good fibers: 95188
+Fibers | 09/07/2025 05:57:11 PM | INFO  |  working on shotid: 20240727011
+Fibers | 09/07/2025 05:57:34 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:57:34 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 05:57:37 PM | INFO  |  working on shotid: 20240727012
+Fibers | 09/07/2025 05:58:03 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:58:03 PM | INFO  |  Good fibers: 96867
+Fibers | 09/07/2025 05:58:06 PM | INFO  |  working on shotid: 20240727013
+Fibers | 09/07/2025 05:58:34 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:58:34 PM | INFO  |  Good fibers: 96864
+Fibers | 09/07/2025 05:58:37 PM | INFO  |  progress 791/808
+Fibers | 09/07/2025 05:58:37 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 05:58:43 PM | INFO  |  working on shotid: 20240727014
+Fibers | 09/07/2025 05:59:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:59:08 PM | INFO  |  Good fibers: 0
+Fibers | 09/07/2025 05:59:09 PM | INFO  |  working on shotid: 20240728013
+Fibers | 09/07/2025 05:59:34 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 05:59:34 PM | INFO  |  Good fibers: 95862
+Fibers | 09/07/2025 05:59:37 PM | INFO  |  working on shotid: 20240728014
+Fibers | 09/07/2025 06:00:06 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:00:06 PM | INFO  |  Good fibers: 95887
+Fibers | 09/07/2025 06:00:09 PM | INFO  |  working on shotid: 20240728015
+Fibers | 09/07/2025 06:00:33 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:00:33 PM | INFO  |  Good fibers: 96192
+Fibers | 09/07/2025 06:00:36 PM | INFO  |  working on shotid: 20240728016
+Fibers | 09/07/2025 06:01:10 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:01:10 PM | INFO  |  Good fibers: 96861
+Fibers | 09/07/2025 06:01:13 PM | INFO  |  working on shotid: 20240728017
+Fibers | 09/07/2025 06:01:42 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:01:42 PM | INFO  |  Good fibers: 95539
+Fibers | 09/07/2025 06:01:45 PM | INFO  |  working on shotid: 20240729011
+Fibers | 09/07/2025 06:02:15 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:02:15 PM | INFO  |  Good fibers: 97869
+Fibers | 09/07/2025 06:02:18 PM | INFO  |  working on shotid: 20240729012
+Fibers | 09/07/2025 06:02:41 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:02:41 PM | INFO  |  Good fibers: 97536
+Fibers | 09/07/2025 06:02:44 PM | INFO  |  working on shotid: 20240729013
+Fibers | 09/07/2025 06:03:11 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:03:11 PM | INFO  |  Good fibers: 97533
+Fibers | 09/07/2025 06:03:15 PM | INFO  |  working on shotid: 20240729014
+Fibers | 09/07/2025 06:03:39 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:03:39 PM | INFO  |  Good fibers: 93400
+Fibers | 09/07/2025 06:03:42 PM | INFO  |  progress 801/808
+Fibers | 09/07/2025 06:03:42 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5
+Fibers | 09/07/2025 06:03:48 PM | INFO  |  working on shotid: 20240729015
+Fibers | 09/07/2025 06:04:13 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:04:13 PM | INFO  |  Good fibers: 95862
+Fibers | 09/07/2025 06:04:16 PM | INFO  |  working on shotid: 20240730006
+Fibers | 09/07/2025 06:04:39 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:04:40 PM | INFO  |  Good fibers: 95883
+Fibers | 09/07/2025 06:04:43 PM | INFO  |  working on shotid: 20240730008
+Fibers | 09/07/2025 06:05:08 PM | INFO  |  Total fibers: 104496
+Fibers | 09/07/2025 06:05:08 PM | INFO  |  Good fibers: 0
+Fibers | 09/07/2025 06:05:09 PM | INFO  |  working on shotid: 20240731006
+Fibers | 09/07/2025 06:05:36 PM | INFO  |  Total fibers: 104160
+Fibers | 09/07/2025 06:05:36 PM | INFO  |  Good fibers: 89261
+Fibers | 09/07/2025 06:05:39 PM | INFO  |  working on shotid: 20240731007
+Fibers | 09/07/2025 06:06:07 PM | INFO  |  Total fibers: 104160
+Fibers | 09/07/2025 06:06:07 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 06:06:10 PM | INFO  |  working on shotid: 20240731008
+Fibers | 09/07/2025 06:06:42 PM | INFO  |  Total fibers: 104160
+Fibers | 09/07/2025 06:06:42 PM | INFO  |  Good fibers: 94434
+Fibers | 09/07/2025 06:06:45 PM | INFO  |  working on shotid: 20240731009
+Fibers | 09/07/2025 06:07:17 PM | INFO  |  Total fibers: 104160
+Fibers | 09/07/2025 06:07:17 PM | INFO  |  Good fibers: 97197
+Fibers | 09/07/2025 06:07:20 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky.h5

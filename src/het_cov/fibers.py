@@ -6,6 +6,7 @@ from astropy.table import Table, join
 from hetdex_api.shot import get_fibers_table
 from hetdex_api.survey import FiberIndex
 from hetdex_api.detections import Detections
+from elixer import spectrum_utilities as SU
 import numpy as np
 import h5py
 import os.path as op
@@ -113,18 +114,35 @@ class Fibers():
         fib_tab: astropy Table
             Table with fiber_id, calfib_ffsky and flag (True for good fibers)
         """
+        # 1. Load the fluxes, "calfib_ffsky", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
         fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',verbose=False, add_rescor=False)['fiber_id','calfib_ffsky','calfibe']
         F = FiberIndex(survey='hdr5') 
         fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
         fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
-        # Only keep good fibers, flag=True
+        # 2. Only keep good fibers, flag=True
         self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
-        self.logger.info(f'Good fibers: {len(fib_tab)}')
 
-        # mask the bad pixels for each fiber
-        fib_tab[fib_tab['calfibe'] < 0]['calfib_ffsky'] = np.nan
+        # 3. mask the bad pixels for each fiber. this includes cosmic rays.
+        fib_tab['calfib_ffsky'][fib_tab['calfibe'] <= 0] = np.nan
         fib_tab.remove_column('calfibe')
+        
+        self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(np.isnan(fib_tab['calfib_ffsky']))/fib_tab['calfib_ffsky'].size}')
+
+        #4.  Remove strong continuum sources, from Mahan's code and Elixer
+        wl = np.linspace(3470,5540,1036)
+        wl_vac=SU.air_to_vac(wl)
+        mask_zone1 = (3500 < wl_vac) & (wl_vac < 3860)
+        mask_zone2 = (3860 < wl_vac) & (wl_vac < 4270)
+        mask_zone3 = (4270 < wl_vac) & (wl_vac < 4860)
+        mask_zone4 = (4860 < wl_vac) & (wl_vac < 5090)
+        mask_zone5 = (5090 < wl_vac) & (wl_vac < 5500)
+
+        medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
+        # Remove the fiber even if one of the regions has a high continuum
+        valid_mask = np.all((-0.02 < medians) & (medians < 0.05), axis=0)
+        self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
+        fib_tab = fib_tab[valid_mask]
 
         return fib_tab
 
