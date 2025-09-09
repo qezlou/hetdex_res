@@ -123,8 +123,13 @@ class Fibers():
         self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
 
-        # 3. mask the bad pixels for each fiber. this includes cosmic rays.
+        # 3. Find the bad pixels for each fiber. this includes cosmic rays.
+        # They are fibers with non-positive calfib error.
+        # We replace the flux value by the median, but
+        # NOTE: we may need to ignore these pixels altogether 
+        # when working on a probabilistic model
         mask_bad_pixs = fib_tab['calfibe'] <= 0
+        
         fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
         fib_tab.remove_column('calfibe')
         self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}')
