@@ -146,7 +146,13 @@ class Fibers():
 
         medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
         ## Remove the fiber even if one of the regions has a high continuum
-        valid_mask = np.all((-0.02 < medians) & (medians < 0.05), axis=0)
+        # Define different upper bounds for the blue side
+        upper_bounds = [0.25, 0.08, 0.08, 0.08, 0.08]  # example values, adjust as needed
+        lower_bound = -0.02  # same lower bound for all
+
+        valid_mask = np.ones(medians.shape[1], dtype=bool)
+        for i, ub in enumerate(upper_bounds):
+            valid_mask &= (medians[i] > lower_bound) & (medians[i] < ub)
         self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
         fib_tab = fib_tab[valid_mask]
 
