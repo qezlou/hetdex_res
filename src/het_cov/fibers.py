@@ -31,7 +31,7 @@ class Fibers():
         self.logger = self.configure_logging(logging_level=logging_level, logger_name='Fibers')
         self.data_dir = data_dir
         self.save_dir = data_dir
-        self.shotids_list = self._load_shotids_list()
+        self.shotids_list = self._get_shotids_list()
 
 
     def configure_logging(self, logging_level='INFO', logger_name='Fibers'):
@@ -78,12 +78,13 @@ class Fibers():
         prefix= 'shotlist_*.txt'
         shotlist_files = sorted(glob(op.join(self.data_dir, prefix)))
         for i, f in enumerate(shotlist_files):
-            self.logger.info(f'loading shotlist from {f}')
+            self.logger.debug(f'loading shotlist from {f}')
             shotids = np.loadtxt(f, dtype=int)
             if i==0:
                 shotids_list = shotids
             else:
                 shotids_list = np.append(shotids_list, shotids)
+        shotids_list = np.sort(shotids_list)[::-1]
         self.logger.info(f'we have {len(shotids_list)} shotids in total')
         return shotids_list
 
@@ -95,7 +96,7 @@ class Fibers():
         """
         shotids_path = op.join(self.data_dir, 'hdr5_shotid_list.h5')
         if op.exists(shotids_path):
-            self.logger.info(f'loading shotids from {shotids_path}')
+            self.logger.debug(f'loading shotids from {shotids_path}')
             with h5py.File(shotids_path,'r') as f:
                 shotids_list = f['shotid'][:]
         else:
