@@ -1,12 +1,12 @@
 # I cannot pip install on the Hub
 import sys
 import os
-import parser
+import argparse
 
 # Determine if we are on the Hub by checking for a specific environment variable
 if 'JUPYTERHUB_USER' in os.environ:
     sys.path.append(os.path.abspath('/home/jovyan/work/hetdex/packs/private-het-data/src/het_cov'))
-    import fibers
+    from het_cov import fibers
     data_dir = '/home/jovyan/work/hetdex/data/'
 else:
     from het_cov import fibers
@@ -26,10 +26,10 @@ def run(bad_fibs=True, bad_pix=True, strong_cont=True):
     fibs.get_cov(save_file=save_File, masking=masking)
 
 if __name__ == "__main__":
-    parser = parser.ArgumentParser(description="Compute covariance matrices with optional masking.")
-    parser.add_argument('--bad_fibs', action='store_true', type=int, help="Mask bad fibers if set.")
-    parser.add_argument('--bad_pix', action='store_true', type=int, help="Mask bad pixels if set.")
-    parser.add_argument('--strong_cont', action='store_true', type=int, help="Mask strong continuum if set.")
+    parser = argparse.ArgumentParser(description="Compute covariance matrices with optional masking.")
+    parser.add_argument('--bad_fibs', action='store_true', help="Mask bad fibers if set.")
+    parser.add_argument('--bad_pix', action='store_true', help="Mask bad pixels if set.")
+    parser.add_argument('--strong_cont', action='store_true', help="Mask strong continuum if set.")
     args = parser.parse_args()
 
     run(bad_fibs=args.bad_fibs, bad_pix=args.bad_pix, strong_cont=args.strong_cont)
