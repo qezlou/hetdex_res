@@ -10,6 +10,7 @@ from elixer import spectrum_utilities as SU
 import numpy as np
 import h5py
 import os.path as op
+from glob import glob
 import time
 import logging
 import sys
@@ -69,8 +70,25 @@ class Fibers():
         logger.addHandler(console_handler)
         
         return logger
+    
+    def _get_shotids_list(self):
+        """
+        Loading the list of shotids from HDR5 shotlist, for now it is 6771 in total
+        """
+        prefix= 'shotlist_*.txt'
+        shotlist_files = sorted(glob(op.join(self.data_dir, prefix)))
+        for i, f in enumerate(shotlist_files):
+            self.logger.info(f'loading shotlist from {f}')
+            shotids = np.loadtxt(f, dtype=int)
+            if i==0:
+                shotids_list = shotids
+            else:
+                shotids_list = np.append(shotids_list, shotids)
+        self.logger.info(f'we have {len(shotids_list)} shotids in total')
+        return shotids_list
 
-    def _load_shotids_list(self):
+
+    def _deprecated_load_shotids_list(self):
         """
         Load the shotid list from a h5 file that was generated with 
         `hetdex_api.detections.Detections`
@@ -85,7 +103,7 @@ class Fibers():
             shotids_list = self._get_shotids_list(shotids_path)
         return shotids_list
 
-    def _get_shotids_list(self, shotids_path):
+    def _deprecated_get_shotids_list(self, shotids_path):
         """
         Load the shotid list from a h5 file that was generated with 
         `hetdex_api.detections.Detections`
@@ -102,7 +120,7 @@ class Fibers():
         with h5py.File(shotids_path,'w') as fw:
             fw['shotid'] = shotids_list
 
-    def get_fibers_one_shot(self, shotid):
+    def get_fibers_one_shot(self, shotid, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}):
         """
         Get fiber table for a single shot
         Parameters
@@ -115,7 +133,9 @@ class Fibers():
             Table with fiber_id, calfib_ffsky and flag (True for good fibers)
         """
         # 1. Load the fluxes, "calfib_ffsky", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
-        fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',verbose=False, add_rescor=False)['fiber_id','calfib_ffsky','calfibe']
+        keys_to_query = ['fiber_id', 'calfib_ffsky', 'calfibe']
+        fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',
+                                             verbose=False, add_rescor=False)[keys_to_query]
         F = FiberIndex(survey='hdr5') 
         fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
         fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
@@ -123,38 +143,39 @@ class Fibers():
         self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
 
-        # 3. Find the bad pixels for each fiber. this includes cosmic rays.
-        # They are fibers with non-positive calfib error.
-        # We replace the flux value by the median, but
-        # NOTE: we may need to ignore these pixels altogether 
-        # when working on a probabilistic model
-        mask_bad_pixs = fib_tab['calfibe'] <= 0
+        if masking['bad_pixels']:
+            # 3. Find the bad pixels for each fiber. this includes cosmic rays.
+            # They are fibers with non-positive calfib error.
+            # We replace the flux value by the median, but
+            # NOTE: we may need to ignore these pixels altogether
+            # when working on a probabilistic model
+            mask_bad_pixs = fib_tab['calfibe'] <= 0
+            fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
+            fib_tab.remove_column('calfibe')
+            self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}")
+            del mask_bad_pixs
         
-        fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
-        fib_tab.remove_column('calfibe')
-        self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}")
-        del mask_bad_pixs
+        if masking['strong_continuum']:
+            #4.  Remove strong continuum sources, from Mahan's code and Elixer
+            wl = np.linspace(3470,5540,1036)
+            wl_vac=SU.air_to_vac(wl)
+            mask_zone1 = (3500 < wl_vac) & (wl_vac < 3860)
+            mask_zone2 = (3860 < wl_vac) & (wl_vac < 4270)
+            mask_zone3 = (4270 < wl_vac) & (wl_vac < 4860)
+            mask_zone4 = (4860 < wl_vac) & (wl_vac < 5090)
+            mask_zone5 = (5090 < wl_vac) & (wl_vac < 5500)
 
-        #4.  Remove strong continuum sources, from Mahan's code and Elixer
-        wl = np.linspace(3470,5540,1036)
-        wl_vac=SU.air_to_vac(wl)
-        mask_zone1 = (3500 < wl_vac) & (wl_vac < 3860)
-        mask_zone2 = (3860 < wl_vac) & (wl_vac < 4270)
-        mask_zone3 = (4270 < wl_vac) & (wl_vac < 4860)
-        mask_zone4 = (4860 < wl_vac) & (wl_vac < 5090)
-        mask_zone5 = (5090 < wl_vac) & (wl_vac < 5500)
+            medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
+            ## Remove the fiber even if one of the regions has a high continuum
+            # Define different upper bounds for the blue side
+            upper_bounds = [0.25, 0.08, 0.08, 0.08, 0.08]  # example values, adjust as needed
+            lower_bound = -0.02  # same lower bound for all
 
-        medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
-        ## Remove the fiber even if one of the regions has a high continuum
-        # Define different upper bounds for the blue side
-        upper_bounds = [0.25, 0.08, 0.08, 0.08, 0.08]  # example values, adjust as needed
-        lower_bound = -0.02  # same lower bound for all
-
-        valid_mask = np.ones(medians.shape[1], dtype=bool)
-        for i, ub in enumerate(upper_bounds):
-            valid_mask &= (medians[i] > lower_bound) & (medians[i] < ub)
-        self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
-        fib_tab = fib_tab[valid_mask]
+            valid_mask = np.ones(medians.shape[1], dtype=bool)
+            for i, ub in enumerate(upper_bounds):
+                valid_mask &= (medians[i] > lower_bound) & (medians[i] < ub)
+            self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
+            fib_tab = fib_tab[valid_mask]
 
         return fib_tab
 
@@ -167,13 +188,13 @@ class Fibers():
             fib_tab = self.get_fibers_one_shot(shotid)
             with h5py.File(op.join(f'calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['calfib_ffsky'] = fib_tab['calfib_ffsky']
-            
-    def get_cov(self):
+
+    def get_cov(self, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
         """
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
-        cov_path = op.join(self.save_dir, f'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5')
+        cov_path = op.join(self.save_dir, save_file)
         if op.exists(cov_path):
             cov_all, shotids_in_cov = self.load_cov(cov_path)
             if cov_all.shape[0] != len(self.shotids_list):
