@@ -1,0 +1,474 @@
+v320-024.ls6.tacc.utexas.edu
+/work/06536/qezlou/hetdex/packs/private-het-data/scripts
+Tue Sep  9 18:55:10 CDT 2025
+WARNING!!!! CANNOT IMPORT hetdex_api.flux_limits.shot_sensitivity ShotSensitivity:  No module named 'pyhetdex'
+Fibers | 09/09/2025 06:55:29 PM | INFO  |  loading shotids from /work/06536/qezlou/hetdex/data/hdr5_shotid_list.h5
+Fibers | 09/09/2025 06:55:29 PM | INFO  |  808 shotids remaining to compute covariance for
+Fibers | 09/09/2025 06:55:29 PM | INFO  |  working on shotid: 20230904011
+Fibers | 09/09/2025 06:55:50 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:55:51 PM | INFO  |  Good fibers: 96528, Fraction of good pixels 0.9716639123495165
+Fibers | 09/09/2025 06:55:57 PM | INFO  |   Remaining fraction after removing continuum sources 0.6635173213989723 
+Fibers | 09/09/2025 06:55:59 PM | INFO  |  progress 1/808
+Fibers | 09/09/2025 06:55:59 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 06:55:59 PM | INFO  |  working on shotid: 20230904012
+Fibers | 09/09/2025 06:56:24 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:56:26 PM | INFO  |  Good fibers: 96528, Fraction of good pixels 0.9714000602861866
+Fibers | 09/09/2025 06:56:32 PM | INFO  |   Remaining fraction after removing continuum sources 0.5960964694181999 
+Fibers | 09/09/2025 06:56:34 PM | INFO  |  working on shotid: 20230905011
+Fibers | 09/09/2025 06:57:03 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:57:04 PM | INFO  |  Good fibers: 98535, Fraction of good pixels 0.9716381573056866
+Fibers | 09/09/2025 06:57:11 PM | INFO  |   Remaining fraction after removing continuum sources 0.6941391383772264 
+Fibers | 09/09/2025 06:57:13 PM | INFO  |  working on shotid: 20230906011
+Fibers | 09/09/2025 06:57:39 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:57:41 PM | INFO  |  Good fibers: 98202, Fraction of good pixels 0.971533097525949
+Fibers | 09/09/2025 06:57:48 PM | INFO  |   Remaining fraction after removing continuum sources 0.5419441559235046 
+Fibers | 09/09/2025 06:57:49 PM | INFO  |  working on shotid: 20230909009
+Fibers | 09/09/2025 06:58:16 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:58:18 PM | INFO  |  Good fibers: 95108, Fraction of good pixels 0.9716313768391407
+Fibers | 09/09/2025 06:58:24 PM | INFO  |   Remaining fraction after removing continuum sources 0.5979728308869916 
+Fibers | 09/09/2025 06:58:26 PM | INFO  |  working on shotid: 20230910017
+Fibers | 09/09/2025 06:58:50 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:58:51 PM | INFO  |  Good fibers: 96531, Fraction of good pixels 0.971672012539713
+Fibers | 09/09/2025 06:58:58 PM | INFO  |   Remaining fraction after removing continuum sources 0.4451316157503807 
+Fibers | 09/09/2025 06:58:59 PM | INFO  |  working on shotid: 20230910019
+Fibers | 09/09/2025 06:59:22 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:59:23 PM | INFO  |  Good fibers: 95972, Fraction of good pixels 0.9716423383300181
+Fibers | 09/09/2025 06:59:30 PM | INFO  |   Remaining fraction after removing continuum sources 0.5395740424290418 
+Fibers | 09/09/2025 06:59:31 PM | INFO  |  working on shotid: 20230911011
+Fibers | 09/09/2025 06:59:56 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 06:59:57 PM | INFO  |  Good fibers: 95520, Fraction of good pixels 0.9714640609741112
+Fibers | 09/09/2025 07:00:04 PM | INFO  |   Remaining fraction after removing continuum sources 0.5539258793969849 
+Fibers | 09/09/2025 07:00:05 PM | INFO  |  working on shotid: 20230911020
+Fibers | 09/09/2025 07:00:31 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:00:33 PM | INFO  |  Good fibers: 97226, Fraction of good pixels 0.9716691902089841
+Fibers | 09/09/2025 07:00:39 PM | INFO  |   Remaining fraction after removing continuum sources 0.4980663608499784 
+Fibers | 09/09/2025 07:00:40 PM | INFO  |  working on shotid: 20230911021
+Fibers | 09/09/2025 07:01:05 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:01:06 PM | INFO  |  Good fibers: 96864, Fraction of good pixels 0.9715204129692484
+Fibers | 09/09/2025 07:01:13 PM | INFO  |   Remaining fraction after removing continuum sources 0.5798439048562933 
+Fibers | 09/09/2025 07:01:14 PM | INFO  |  working on shotid: 20230914007
+Fibers | 09/09/2025 07:01:41 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:01:42 PM | INFO  |  Good fibers: 98202, Fraction of good pixels 0.9716444038326485
+Fibers | 09/09/2025 07:01:49 PM | INFO  |   Remaining fraction after removing continuum sources 0.25127797804525365 
+Fibers | 09/09/2025 07:01:49 PM | INFO  |  progress 11/808
+Fibers | 09/09/2025 07:01:49 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:01:49 PM | INFO  |  working on shotid: 20230914009
+Fibers | 09/09/2025 07:02:23 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:02:25 PM | INFO  |  Good fibers: 97530, Fraction of good pixels 0.971633646433708
+Fibers | 09/09/2025 07:02:31 PM | INFO  |   Remaining fraction after removing continuum sources 0.46576438019071054 
+Fibers | 09/09/2025 07:02:33 PM | INFO  |  working on shotid: 20230914010
+Fibers | 09/09/2025 07:02:58 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:02:59 PM | INFO  |  Good fibers: 96189, Fraction of good pixels 0.9716261433661553
+Fibers | 09/09/2025 07:03:06 PM | INFO  |   Remaining fraction after removing continuum sources 0.4678497541298901 
+Fibers | 09/09/2025 07:03:07 PM | INFO  |  working on shotid: 20230914011
+Fibers | 09/09/2025 07:03:32 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:03:34 PM | INFO  |  Good fibers: 96195, Fraction of good pixels 0.9716032086529514
+Fibers | 09/09/2025 07:03:40 PM | INFO  |   Remaining fraction after removing continuum sources 0.5202453349966214 
+Fibers | 09/09/2025 07:03:42 PM | INFO  |  working on shotid: 20230914012
+Fibers | 09/09/2025 07:04:10 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:04:12 PM | INFO  |  Good fibers: 97533, Fraction of good pixels 0.9716718491517791
+Fibers | 09/09/2025 07:04:18 PM | INFO  |   Remaining fraction after removing continuum sources 0.2858929798119611 
+Fibers | 09/09/2025 07:04:19 PM | INFO  |  working on shotid: 20230914013
+Fibers | 09/09/2025 07:04:47 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:04:48 PM | INFO  |  Good fibers: 97530, Fraction of good pixels 0.9716258971103634
+Fibers | 09/09/2025 07:04:55 PM | INFO  |   Remaining fraction after removing continuum sources 0.5405311186301651 
+Fibers | 09/09/2025 07:04:56 PM | INFO  |  working on shotid: 20230914014
+Fibers | 09/09/2025 07:05:23 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:05:25 PM | INFO  |  Good fibers: 97536, Fraction of good pixels 0.971482651054809
+Fibers | 09/09/2025 07:05:31 PM | INFO  |   Remaining fraction after removing continuum sources 0.6592847769028871 
+Fibers | 09/09/2025 07:05:33 PM | INFO  |  working on shotid: 20230914015
+Fibers | 09/09/2025 07:06:02 PM | INFO  |  Total fibers: 102480
+Fibers | 09/09/2025 07:06:04 PM | INFO  |  Good fibers: 97530, Fraction of good pixels 0.9715745615545677
+Fibers | 09/09/2025 07:06:10 PM | INFO  |   Remaining fraction after removing continuum sources 0.6151543114938993 
+Fibers | 09/09/2025 07:06:12 PM | INFO  |  working on shotid: 20230915014
+Fibers | 09/09/2025 07:06:43 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:06:45 PM | INFO  |  Good fibers: 97530, Fraction of good pixels 0.9715802028244354
+Fibers | 09/09/2025 07:06:51 PM | INFO  |   Remaining fraction after removing continuum sources 0.3724392494617041 
+Fibers | 09/09/2025 07:06:52 PM | INFO  |  working on shotid: 20230915015
+Fibers | 09/09/2025 07:07:22 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:07:24 PM | INFO  |  Good fibers: 96858, Fraction of good pixels 0.9715715961534582
+Fibers | 09/09/2025 07:07:30 PM | INFO  |   Remaining fraction after removing continuum sources 0.5773813211092527 
+Fibers | 09/09/2025 07:07:32 PM | INFO  |  working on shotid: 20230915016
+Fibers | 09/09/2025 07:08:02 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:08:04 PM | INFO  |  Good fibers: 97194, Fraction of good pixels 0.9715838593084102
+Fibers | 09/09/2025 07:08:10 PM | INFO  |   Remaining fraction after removing continuum sources 0.488600119348931 
+Fibers | 09/09/2025 07:08:11 PM | INFO  |  progress 21/808
+Fibers | 09/09/2025 07:08:11 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:08:12 PM | INFO  |  working on shotid: 20230915017
+Fibers | 09/09/2025 07:08:37 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:08:38 PM | INFO  |  Good fibers: 96858, Fraction of good pixels 0.9715690549178748
+Fibers | 09/09/2025 07:08:45 PM | INFO  |   Remaining fraction after removing continuum sources 0.5201841871605856 
+Fibers | 09/09/2025 07:08:46 PM | INFO  |  working on shotid: 20230915019
+Fibers | 09/09/2025 07:09:14 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:09:15 PM | INFO  |  Good fibers: 95520, Fraction of good pixels 0.9715647292123423
+Fibers | 09/09/2025 07:09:22 PM | INFO  |   Remaining fraction after removing continuum sources 0.6219325795644891 
+Fibers | 09/09/2025 07:09:23 PM | INFO  |  working on shotid: 20230915021
+Fibers | 09/09/2025 07:09:50 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:09:52 PM | INFO  |  Good fibers: 96189, Fraction of good pixels 0.9715144042951797
+Fibers | 09/09/2025 07:09:58 PM | INFO  |   Remaining fraction after removing continuum sources 0.6364553119379555 
+Fibers | 09/09/2025 07:10:00 PM | INFO  |  working on shotid: 20230915022
+Fibers | 09/09/2025 07:10:29 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:10:31 PM | INFO  |  Good fibers: 91527, Fraction of good pixels 0.9716270718352071
+Fibers | 09/09/2025 07:10:37 PM | INFO  |   Remaining fraction after removing continuum sources 0.5968512023774405 
+Fibers | 09/09/2025 07:10:39 PM | INFO  |  working on shotid: 20230918020
+Fibers | 09/09/2025 07:11:05 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:11:07 PM | INFO  |  Good fibers: 98202, Fraction of good pixels 0.9715337167680297
+Fibers | 09/09/2025 07:11:13 PM | INFO  |   Remaining fraction after removing continuum sources 0.39826072788741573 
+Fibers | 09/09/2025 07:11:15 PM | INFO  |  working on shotid: 20230918021
+Fibers | 09/09/2025 07:11:44 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:11:45 PM | INFO  |  Good fibers: 96152, Fraction of good pixels 0.9715912421966378
+Fibers | 09/09/2025 07:11:52 PM | INFO  |   Remaining fraction after removing continuum sources 0.5180131458524003 
+Fibers | 09/09/2025 07:11:53 PM | INFO  |  working on shotid: 20230918022
+Fibers | 09/09/2025 07:12:18 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:12:20 PM | INFO  |  Good fibers: 97194, Fraction of good pixels 0.9715932740656489
+Fibers | 09/09/2025 07:12:26 PM | INFO  |   Remaining fraction after removing continuum sources 0.46719962137580506 
+Fibers | 09/09/2025 07:12:27 PM | INFO  |  working on shotid: 20230918023
+Fibers | 09/09/2025 07:12:54 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:12:56 PM | INFO  |  Good fibers: 97212, Fraction of good pixels 0.9714943652189054
+Fibers | 09/09/2025 07:13:02 PM | INFO  |   Remaining fraction after removing continuum sources 0.3909702505863474 
+Fibers | 09/09/2025 07:13:03 PM | INFO  |  working on shotid: 20230918024
+Fibers | 09/09/2025 07:13:30 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:13:32 PM | INFO  |  Good fibers: 97866, Fraction of good pixels 0.9716262217181842
+Fibers | 09/09/2025 07:13:38 PM | INFO  |   Remaining fraction after removing continuum sources 0.48229211370649666 
+Fibers | 09/09/2025 07:13:40 PM | INFO  |  working on shotid: 20230918025
+Fibers | 09/09/2025 07:14:07 PM | INFO  |  Total fibers: 102368
+Fibers | 09/09/2025 07:14:09 PM | INFO  |  Good fibers: 96525, Fraction of good pixels 0.9716569716569716
+Fibers | 09/09/2025 07:14:15 PM | INFO  |   Remaining fraction after removing continuum sources 0.5418078218078218 
+Fibers | 09/09/2025 07:14:16 PM | INFO  |  progress 31/808
+Fibers | 09/09/2025 07:14:16 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:14:17 PM | INFO  |  working on shotid: 20230918026
+Fibers | 09/09/2025 07:14:40 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:14:42 PM | INFO  |  Good fibers: 96814, Fraction of good pixels 0.9716234122621629
+Fibers | 09/09/2025 07:14:48 PM | INFO  |   Remaining fraction after removing continuum sources 0.6272956390604665 
+Fibers | 09/09/2025 07:14:50 PM | INFO  |  working on shotid: 20230918027
+Fibers | 09/09/2025 07:15:16 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:15:17 PM | INFO  |  Good fibers: 97194, Fraction of good pixels 0.9716037117342754
+Fibers | 09/09/2025 07:15:24 PM | INFO  |   Remaining fraction after removing continuum sources 0.5671131962878367 
+Fibers | 09/09/2025 07:15:25 PM | INFO  |  working on shotid: 20230918028
+Fibers | 09/09/2025 07:15:52 PM | INFO  |  Total fibers: 102144
+Fibers | 09/09/2025 07:15:53 PM | INFO  |  Good fibers: 97530, Fraction of good pixels 0.9715314800673152
+Fibers | 09/09/2025 07:16:00 PM | INFO  |   Remaining fraction after removing continuum sources 0.5600635701835333 
+Fibers | 09/09/2025 07:16:01 PM | INFO  |  working on shotid: 20230919006
+Fibers | 09/09/2025 07:16:28 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:16:30 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9717115422112258
+Fibers | 09/09/2025 07:16:36 PM | INFO  |   Remaining fraction after removing continuum sources 0.4715851441085762 
+Fibers | 09/09/2025 07:16:38 PM | INFO  |  working on shotid: 20230919008
+Fibers | 09/09/2025 07:17:05 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:17:07 PM | INFO  |  Good fibers: 97194, Fraction of good pixels 0.9709452745982778
+Fibers | 09/09/2025 07:17:13 PM | INFO  |   Remaining fraction after removing continuum sources 0.555785336543408 
+Fibers | 09/09/2025 07:17:15 PM | INFO  |  working on shotid: 20230919009
+Fibers | 09/09/2025 07:17:38 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:17:40 PM | INFO  |  Good fibers: 96522, Fraction of good pixels 0.9713543410472608
+Fibers | 09/09/2025 07:17:46 PM | INFO  |   Remaining fraction after removing continuum sources 0.5296098298833427 
+Fibers | 09/09/2025 07:17:48 PM | INFO  |  working on shotid: 20230919010
+Fibers | 09/09/2025 07:18:11 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:18:13 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9714470710296634
+Fibers | 09/09/2025 07:18:20 PM | INFO  |   Remaining fraction after removing continuum sources 0.6148096802386909 
+Fibers | 09/09/2025 07:18:21 PM | INFO  |  working on shotid: 20230919011
+Fibers | 09/09/2025 07:18:55 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:18:56 PM | INFO  |  Good fibers: 97866, Fraction of good pixels 0.9716076595789673
+Fibers | 09/09/2025 07:19:02 PM | INFO  |   Remaining fraction after removing continuum sources 0.6453824617333905 
+Fibers | 09/09/2025 07:19:04 PM | INFO  |  working on shotid: 20230919012
+Fibers | 09/09/2025 07:19:30 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:19:31 PM | INFO  |  Good fibers: 97533, Fraction of good pixels 0.9712182357287091
+Fibers | 09/09/2025 07:19:38 PM | INFO  |   Remaining fraction after removing continuum sources 0.6144381901510259 
+Fibers | 09/09/2025 07:19:40 PM | INFO  |  working on shotid: 20230919013
+Fibers | 09/09/2025 07:20:05 PM | INFO  |  Total fibers: 102816
+Fibers | 09/09/2025 07:20:06 PM | INFO  |  Good fibers: 98874, Fraction of good pixels 0.971550810778009
+Fibers | 09/09/2025 07:20:13 PM | INFO  |   Remaining fraction after removing continuum sources 0.6270505896393389 
+Fibers | 09/09/2025 07:20:14 PM | INFO  |  progress 41/808
+Fibers | 09/09/2025 07:20:14 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:20:15 PM | INFO  |  working on shotid: 20230920016
+Fibers | 09/09/2025 07:20:42 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:20:43 PM | INFO  |  Good fibers: 95666, Fraction of good pixels 0.9716156121357551
+Fibers | 09/09/2025 07:20:50 PM | INFO  |   Remaining fraction after removing continuum sources 0.5299374908535948 
+Fibers | 09/09/2025 07:20:51 PM | INFO  |  working on shotid: 20230920017
+Fibers | 09/09/2025 07:21:16 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:21:17 PM | INFO  |  Good fibers: 95396, Fraction of good pixels 0.9715818099267091
+Fibers | 09/09/2025 07:21:23 PM | INFO  |   Remaining fraction after removing continuum sources 0.4471047004067257 
+Fibers | 09/09/2025 07:21:24 PM | INFO  |  working on shotid: 20230920018
+Fibers | 09/09/2025 07:21:52 PM | INFO  |  Total fibers: 104048
+Fibers | 09/09/2025 07:21:54 PM | INFO  |  Good fibers: 95270, Fraction of good pixels 0.9715774674943354
+Fibers | 09/09/2025 07:22:00 PM | INFO  |   Remaining fraction after removing continuum sources 0.5034008607116616 
+Fibers | 09/09/2025 07:22:02 PM | INFO  |  working on shotid: 20230920019
+Fibers | 09/09/2025 07:22:30 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:22:31 PM | INFO  |  Good fibers: 99879, Fraction of good pixels 0.9716861842984451
+Fibers | 09/09/2025 07:22:38 PM | INFO  |   Remaining fraction after removing continuum sources 0.5824747945013466 
+Fibers | 09/09/2025 07:22:40 PM | INFO  |  working on shotid: 20230920020
+Fibers | 09/09/2025 07:23:06 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:23:08 PM | INFO  |  Good fibers: 99879, Fraction of good pixels 0.9715491748877145
+Fibers | 09/09/2025 07:23:15 PM | INFO  |   Remaining fraction after removing continuum sources 0.6120806175472322 
+Fibers | 09/09/2025 07:23:16 PM | INFO  |  working on shotid: 20230920021
+Fibers | 09/09/2025 07:23:42 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:23:44 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9715074698010874
+Fibers | 09/09/2025 07:23:50 PM | INFO  |   Remaining fraction after removing continuum sources 0.6087394723186844 
+Fibers | 09/09/2025 07:23:52 PM | INFO  |  working on shotid: 20230920022
+Fibers | 09/09/2025 07:24:18 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:24:19 PM | INFO  |  Good fibers: 94923, Fraction of good pixels 0.9715947068985847
+Fibers | 09/09/2025 07:24:26 PM | INFO  |   Remaining fraction after removing continuum sources 0.5242775723481138 
+Fibers | 09/09/2025 07:24:27 PM | INFO  |  working on shotid: 20230922016
+Fibers | 09/09/2025 07:24:53 PM | INFO  |  Total fibers: 104048
+Fibers | 09/09/2025 07:24:55 PM | INFO  |  Good fibers: 97197, Fraction of good pixels 0.9703661587979006
+Fibers | 09/09/2025 07:25:02 PM | INFO  |   Remaining fraction after removing continuum sources 0.6152659032686194 
+Fibers | 09/09/2025 07:25:03 PM | INFO  |  working on shotid: 20230922017
+Fibers | 09/09/2025 07:25:29 PM | INFO  |  Total fibers: 103936
+Fibers | 09/09/2025 07:25:31 PM | INFO  |  Good fibers: 95534, Fraction of good pixels 0.9709633486325554
+Fibers | 09/09/2025 07:25:37 PM | INFO  |   Remaining fraction after removing continuum sources 0.6095002826218938 
+Fibers | 09/09/2025 07:25:39 PM | INFO  |  working on shotid: 20230922018
+Fibers | 09/09/2025 07:26:03 PM | INFO  |  Total fibers: 103936
+Fibers | 09/09/2025 07:26:05 PM | INFO  |  Good fibers: 97197, Fraction of good pixels 0.9710195009355477
+Fibers | 09/09/2025 07:26:12 PM | INFO  |   Remaining fraction after removing continuum sources 0.6092780641377821 
+Fibers | 09/09/2025 07:26:13 PM | INFO  |  progress 51/808
+Fibers | 09/09/2025 07:26:13 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:26:14 PM | INFO  |  working on shotid: 20230922019
+Fibers | 09/09/2025 07:26:39 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:26:41 PM | INFO  |  Good fibers: 97869, Fraction of good pixels 0.9707244685404266
+Fibers | 09/09/2025 07:26:47 PM | INFO  |   Remaining fraction after removing continuum sources 0.6618541111077052 
+Fibers | 09/09/2025 07:26:49 PM | INFO  |  working on shotid: 20230923014
+Fibers | 09/09/2025 07:27:16 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:27:18 PM | INFO  |  Good fibers: 101889, Fraction of good pixels 0.9703184451881564
+Fibers | 09/09/2025 07:27:25 PM | INFO  |   Remaining fraction after removing continuum sources 0.5553494489100884 
+Fibers | 09/09/2025 07:27:26 PM | INFO  |  working on shotid: 20230923015
+Fibers | 09/09/2025 07:27:55 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:27:57 PM | INFO  |  Good fibers: 99914, Fraction of good pixels 0.9705702502607841
+Fibers | 09/09/2025 07:28:04 PM | INFO  |   Remaining fraction after removing continuum sources 0.6280901575354805 
+Fibers | 09/09/2025 07:28:05 PM | INFO  |  working on shotid: 20230923016
+Fibers | 09/09/2025 07:28:30 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:28:32 PM | INFO  |  Good fibers: 99226, Fraction of good pixels 0.9710166048147021
+Fibers | 09/09/2025 07:28:38 PM | INFO  |   Remaining fraction after removing continuum sources 0.5611734827565356 
+Fibers | 09/09/2025 07:28:40 PM | INFO  |  working on shotid: 20230923017
+Fibers | 09/09/2025 07:29:11 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:29:12 PM | INFO  |  Good fibers: 101553, Fraction of good pixels 0.9707787766412327
+Fibers | 09/09/2025 07:29:19 PM | INFO  |   Remaining fraction after removing continuum sources 0.5999231928155742 
+Fibers | 09/09/2025 07:29:21 PM | INFO  |  working on shotid: 20230923018
+Fibers | 09/09/2025 07:29:48 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:29:50 PM | INFO  |  Good fibers: 101217, Fraction of good pixels 0.9713196003097897
+Fibers | 09/09/2025 07:29:57 PM | INFO  |   Remaining fraction after removing continuum sources 0.5976071213333729 
+Fibers | 09/09/2025 07:29:58 PM | INFO  |  working on shotid: 20230923019
+Fibers | 09/09/2025 07:30:22 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:30:24 PM | INFO  |  Good fibers: 100551, Fraction of good pixels 0.9716355929024127
+Fibers | 09/09/2025 07:30:31 PM | INFO  |   Remaining fraction after removing continuum sources 0.6385117999820986 
+Fibers | 09/09/2025 07:30:33 PM | INFO  |  working on shotid: 20230923020
+Fibers | 09/09/2025 07:31:01 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:31:02 PM | INFO  |  Good fibers: 99851, Fraction of good pixels 0.9716553050145103
+Fibers | 09/09/2025 07:31:09 PM | INFO  |   Remaining fraction after removing continuum sources 0.5828083844928944 
+Fibers | 09/09/2025 07:31:11 PM | INFO  |  working on shotid: 20230924013
+Fibers | 09/09/2025 07:31:37 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:31:39 PM | INFO  |  Good fibers: 98532, Fraction of good pixels 0.9715301906113013
+Fibers | 09/09/2025 07:31:45 PM | INFO  |   Remaining fraction after removing continuum sources 0.4714610481873909 
+Fibers | 09/09/2025 07:31:46 PM | INFO  |  working on shotid: 20230924014
+Fibers | 09/09/2025 07:32:14 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:32:16 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9716555439148542
+Fibers | 09/09/2025 07:32:22 PM | INFO  |   Remaining fraction after removing continuum sources 0.43636490639843534 
+Fibers | 09/09/2025 07:32:24 PM | INFO  |  progress 61/808
+Fibers | 09/09/2025 07:32:24 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:32:24 PM | INFO  |  working on shotid: 20230924015
+Fibers | 09/09/2025 07:32:49 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:32:50 PM | INFO  |  Good fibers: 99540, Fraction of good pixels 0.9715657468369946
+Fibers | 09/09/2025 07:32:57 PM | INFO  |   Remaining fraction after removing continuum sources 0.5564295760498292 
+Fibers | 09/09/2025 07:32:58 PM | INFO  |  working on shotid: 20230924016
+Fibers | 09/09/2025 07:33:24 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:33:25 PM | INFO  |  Good fibers: 100548, Fraction of good pixels 0.9716564999862529
+Fibers | 09/09/2025 07:33:32 PM | INFO  |   Remaining fraction after removing continuum sources 0.5160221983530254 
+Fibers | 09/09/2025 07:33:33 PM | INFO  |  working on shotid: 20230925019
+Fibers | 09/09/2025 07:33:58 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:33:59 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9716544073282787
+Fibers | 09/09/2025 07:34:06 PM | INFO  |   Remaining fraction after removing continuum sources 0.6299844330020357 
+Fibers | 09/09/2025 07:34:08 PM | INFO  |  working on shotid: 20230925020
+Fibers | 09/09/2025 07:34:35 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:34:37 PM | INFO  |  Good fibers: 99239, Fraction of good pixels 0.9716209271474843
+Fibers | 09/09/2025 07:34:44 PM | INFO  |   Remaining fraction after removing continuum sources 0.5800038291397536 
+Fibers | 09/09/2025 07:34:45 PM | INFO  |  working on shotid: 20230925021
+Fibers | 09/09/2025 07:35:21 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:35:22 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.97165462886634
+Fibers | 09/09/2025 07:35:29 PM | INFO  |   Remaining fraction after removing continuum sources 0.6140881331577057 
+Fibers | 09/09/2025 07:35:31 PM | INFO  |  working on shotid: 20231008019
+Fibers | 09/09/2025 07:36:07 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:36:08 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9714425784133005
+Fibers | 09/09/2025 07:36:15 PM | INFO  |   Remaining fraction after removing continuum sources 0.37578333932064023 
+Fibers | 09/09/2025 07:36:16 PM | INFO  |  working on shotid: 20231008020
+Fibers | 09/09/2025 07:36:51 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:36:52 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9713259673929937
+Fibers | 09/09/2025 07:36:59 PM | INFO  |   Remaining fraction after removing continuum sources 0.3971248606130014 
+Fibers | 09/09/2025 07:37:00 PM | INFO  |  working on shotid: 20231009015
+Fibers | 09/09/2025 07:37:37 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:37:39 PM | INFO  |  Good fibers: 99540, Fraction of good pixels 0.971597931566286
+Fibers | 09/09/2025 07:37:45 PM | INFO  |   Remaining fraction after removing continuum sources 0.4153104279686558 
+Fibers | 09/09/2025 07:37:46 PM | INFO  |  working on shotid: 20231009016
+Fibers | 09/09/2025 07:38:28 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:38:30 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9715879266457041
+Fibers | 09/09/2025 07:38:36 PM | INFO  |   Remaining fraction after removing continuum sources 0.3580808685586557 
+Fibers | 09/09/2025 07:38:37 PM | INFO  |  working on shotid: 20231009017
+Fibers | 09/09/2025 07:39:16 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:39:17 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9715906814233362
+Fibers | 09/09/2025 07:39:24 PM | INFO  |   Remaining fraction after removing continuum sources 0.4312258013012414 
+Fibers | 09/09/2025 07:39:25 PM | INFO  |  progress 71/808
+Fibers | 09/09/2025 07:39:25 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:39:26 PM | INFO  |  working on shotid: 20231009018
+Fibers | 09/09/2025 07:40:03 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:40:04 PM | INFO  |  Good fibers: 100548, Fraction of good pixels 0.971606138899372
+Fibers | 09/09/2025 07:40:11 PM | INFO  |   Remaining fraction after removing continuum sources 0.3663722799061145 
+Fibers | 09/09/2025 07:40:12 PM | INFO  |  working on shotid: 20231009019
+Fibers | 09/09/2025 07:40:53 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:40:54 PM | INFO  |  Good fibers: 98532, Fraction of good pixels 0.9714964618828338
+Fibers | 09/09/2025 07:41:01 PM | INFO  |   Remaining fraction after removing continuum sources 0.3993626436081679 
+Fibers | 09/09/2025 07:41:02 PM | INFO  |  working on shotid: 20231010010
+Fibers | 09/09/2025 07:41:43 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:41:43 PM | INFO  |  Good fibers: 0, Fraction of good pixels nan
+Fibers | 09/09/2025 07:41:43 PM | INFO  |   Remaining fraction after removing continuum sources nan 
+Fibers | 09/09/2025 07:41:43 PM | INFO  |  working on shotid: 20231011012
+Fibers | 09/09/2025 07:42:17 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:42:18 PM | INFO  |  Good fibers: 99876, Fraction of good pixels 0.9715751199440975
+Fibers | 09/09/2025 07:42:25 PM | INFO  |   Remaining fraction after removing continuum sources 0.45005807200929154 
+Fibers | 09/09/2025 07:42:26 PM | INFO  |  working on shotid: 20231011013
+Fibers | 09/09/2025 07:43:13 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:43:14 PM | INFO  |  Good fibers: 99210, Fraction of good pixels 0.9715928324107943
+Fibers | 09/09/2025 07:43:21 PM | INFO  |   Remaining fraction after removing continuum sources 0.4492389880052414 
+Fibers | 09/09/2025 07:43:22 PM | INFO  |  working on shotid: 20231011014
+Fibers | 09/09/2025 07:43:57 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:43:58 PM | INFO  |  Good fibers: 99207, Fraction of good pixels 0.9714460770434643
+Fibers | 09/09/2025 07:44:05 PM | INFO  |   Remaining fraction after removing continuum sources 0.4316530083562652 
+Fibers | 09/09/2025 07:44:06 PM | INFO  |  working on shotid: 20231011015
+Fibers | 09/09/2025 07:44:46 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:44:47 PM | INFO  |  Good fibers: 99876, Fraction of good pixels 0.9716036108713028
+Fibers | 09/09/2025 07:44:53 PM | INFO  |   Remaining fraction after removing continuum sources 0.5459870239096479 
+Fibers | 09/09/2025 07:44:55 PM | INFO  |  working on shotid: 20231011016
+Fibers | 09/09/2025 07:45:25 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:45:26 PM | INFO  |  Good fibers: 99546, Fraction of good pixels 0.9715265510048826
+Fibers | 09/09/2025 07:45:33 PM | INFO  |   Remaining fraction after removing continuum sources 0.5919574869909389 
+Fibers | 09/09/2025 07:45:34 PM | INFO  |  working on shotid: 20231011017
+Fibers | 09/09/2025 07:46:15 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:46:16 PM | INFO  |  Good fibers: 99876, Fraction of good pixels 0.9716070224375523
+Fibers | 09/09/2025 07:46:23 PM | INFO  |   Remaining fraction after removing continuum sources 0.3695582522327686 
+Fibers | 09/09/2025 07:46:24 PM | INFO  |  working on shotid: 20231011018
+Fibers | 09/09/2025 07:47:05 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:47:07 PM | INFO  |  Good fibers: 98933, Fraction of good pixels 0.97153239934971
+Fibers | 09/09/2025 07:47:14 PM | INFO  |   Remaining fraction after removing continuum sources 0.5496447090455157 
+Fibers | 09/09/2025 07:47:15 PM | INFO  |  progress 81/808
+Fibers | 09/09/2025 07:47:15 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:47:16 PM | INFO  |  working on shotid: 20231013011
+Fibers | 09/09/2025 07:47:45 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:47:46 PM | INFO  |  Good fibers: 100548, Fraction of good pixels 0.9715062039175896
+Fibers | 09/09/2025 07:47:53 PM | INFO  |   Remaining fraction after removing continuum sources 0.33435771969606554 
+Fibers | 09/09/2025 07:47:54 PM | INFO  |  working on shotid: 20231013013
+Fibers | 09/09/2025 07:48:43 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:48:44 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9715645591962799
+Fibers | 09/09/2025 07:48:51 PM | INFO  |   Remaining fraction after removing continuum sources 0.45473595976529757 
+Fibers | 09/09/2025 07:48:53 PM | INFO  |  working on shotid: 20231013014
+Fibers | 09/09/2025 07:49:23 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:49:24 PM | INFO  |  Good fibers: 99549, Fraction of good pixels 0.9715279908526451
+Fibers | 09/09/2025 07:49:31 PM | INFO  |   Remaining fraction after removing continuum sources 0.5442646334970718 
+Fibers | 09/09/2025 07:49:32 PM | INFO  |  working on shotid: 20231013015
+Fibers | 09/09/2025 07:50:05 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:50:07 PM | INFO  |  Good fibers: 100218, Fraction of good pixels 0.9715960807755695
+Fibers | 09/09/2025 07:50:14 PM | INFO  |   Remaining fraction after removing continuum sources 0.4742660999022132 
+Fibers | 09/09/2025 07:50:15 PM | INFO  |  working on shotid: 20231013016
+Fibers | 09/09/2025 07:50:53 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:50:54 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9714862074118877
+Fibers | 09/09/2025 07:51:01 PM | INFO  |   Remaining fraction after removing continuum sources 0.513808103030851 
+Fibers | 09/09/2025 07:51:03 PM | INFO  |  working on shotid: 20231013017
+Fibers | 09/09/2025 07:51:48 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:51:50 PM | INFO  |  Good fibers: 100548, Fraction of good pixels 0.9715933902292656
+Fibers | 09/09/2025 07:51:56 PM | INFO  |   Remaining fraction after removing continuum sources 0.4576918486692923 
+Fibers | 09/09/2025 07:51:58 PM | INFO  |  working on shotid: 20231013018
+Fibers | 09/09/2025 07:52:40 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:52:41 PM | INFO  |  Good fibers: 99207, Fraction of good pixels 0.9715413402023217
+Fibers | 09/09/2025 07:52:48 PM | INFO  |   Remaining fraction after removing continuum sources 0.4971624986140091 
+Fibers | 09/09/2025 07:52:50 PM | INFO  |  working on shotid: 20231013020
+Fibers | 09/09/2025 07:53:19 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:53:21 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9714895059539413
+Fibers | 09/09/2025 07:53:27 PM | INFO  |   Remaining fraction after removing continuum sources 0.4986628347902447 
+Fibers | 09/09/2025 07:53:29 PM | INFO  |  working on shotid: 20231014013
+Fibers | 09/09/2025 07:53:59 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:54:00 PM | INFO  |  Good fibers: 98541, Fraction of good pixels 0.9713539557589242
+Fibers | 09/09/2025 07:54:07 PM | INFO  |   Remaining fraction after removing continuum sources 0.5000761104514871 
+Fibers | 09/09/2025 07:54:08 PM | INFO  |  working on shotid: 20231014015
+Fibers | 09/09/2025 07:54:47 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:54:48 PM | INFO  |  Good fibers: 99876, Fraction of good pixels 0.9716008274971389
+Fibers | 09/09/2025 07:54:55 PM | INFO  |   Remaining fraction after removing continuum sources 0.49680603948896634 
+Fibers | 09/09/2025 07:54:56 PM | INFO  |  progress 91/808
+Fibers | 09/09/2025 07:54:56 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 07:54:57 PM | INFO  |  working on shotid: 20231014016
+Fibers | 09/09/2025 07:55:31 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:55:32 PM | INFO  |  Good fibers: 98199, Fraction of good pixels 0.9713651944886479
+Fibers | 09/09/2025 07:55:39 PM | INFO  |   Remaining fraction after removing continuum sources 0.6055153311133514 
+Fibers | 09/09/2025 07:55:40 PM | INFO  |  working on shotid: 20231014017
+Fibers | 09/09/2025 07:56:15 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:56:16 PM | INFO  |  Good fibers: 97524, Fraction of good pixels 0.9715524039305877
+Fibers | 09/09/2025 07:56:23 PM | INFO  |   Remaining fraction after removing continuum sources 0.41187810180058243 
+Fibers | 09/09/2025 07:56:24 PM | INFO  |  working on shotid: 20231014018
+Fibers | 09/09/2025 07:57:09 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:57:11 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.9716099552346709
+Fibers | 09/09/2025 07:57:18 PM | INFO  |   Remaining fraction after removing continuum sources 0.571488444497665 
+Fibers | 09/09/2025 07:57:19 PM | INFO  |  working on shotid: 20231014019
+Fibers | 09/09/2025 07:57:58 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:57:59 PM | INFO  |  Good fibers: 100548, Fraction of good pixels 0.9715883118810079
+Fibers | 09/09/2025 07:58:06 PM | INFO  |   Remaining fraction after removing continuum sources 0.508035962923181 
+Fibers | 09/09/2025 07:58:07 PM | INFO  |  working on shotid: 20231014020
+Fibers | 09/09/2025 07:58:34 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:58:36 PM | INFO  |  Good fibers: 100212, Fraction of good pixels 0.971545063846884
+Fibers | 09/09/2025 07:58:43 PM | INFO  |   Remaining fraction after removing continuum sources 0.590637847762743 
+Fibers | 09/09/2025 07:58:44 PM | INFO  |  working on shotid: 20231015012
+Fibers | 09/09/2025 07:59:25 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 07:59:25 PM | INFO  |  Good fibers: 0, Fraction of good pixels nan
+Fibers | 09/09/2025 07:59:25 PM | INFO  |   Remaining fraction after removing continuum sources nan 
+Fibers | 09/09/2025 07:59:25 PM | INFO  |  working on shotid: 20231015016
+Fibers | 09/09/2025 08:00:11 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:00:13 PM | INFO  |  Good fibers: 99540, Fraction of good pixels 0.9715774221651255
+Fibers | 09/09/2025 08:00:19 PM | INFO  |   Remaining fraction after removing continuum sources 0.5812035362668274 
+Fibers | 09/09/2025 08:00:21 PM | INFO  |  working on shotid: 20231015017
+Fibers | 09/09/2025 08:00:57 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:00:59 PM | INFO  |  Good fibers: 97536, Fraction of good pixels 0.9715985571746522
+Fibers | 09/09/2025 08:01:05 PM | INFO  |   Remaining fraction after removing continuum sources 0.1919291338582677 
+Fibers | 09/09/2025 08:01:06 PM | INFO  |  working on shotid: 20231015018
+Fibers | 09/09/2025 08:01:37 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:01:39 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9715875489209627
+Fibers | 09/09/2025 08:01:45 PM | INFO  |   Remaining fraction after removing continuum sources 0.5137779653014275 
+Fibers | 09/09/2025 08:01:47 PM | INFO  |  working on shotid: 20231015019
+Fibers | 09/09/2025 08:02:27 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:02:29 PM | INFO  |  Good fibers: 97524, Fraction of good pixels 0.9716283777053434
+Fibers | 09/09/2025 08:02:36 PM | INFO  |   Remaining fraction after removing continuum sources 0.5513514622041754 
+Fibers | 09/09/2025 08:02:37 PM | INFO  |  progress 101/808
+Fibers | 09/09/2025 08:02:37 PM | INFO  |  saving cov in /work/06536/qezlou/hetdex/data/cov_calfib_ffsky_rmvd_bad_fibs_cont.h5
+Fibers | 09/09/2025 08:02:38 PM | INFO  |  working on shotid: 20231015020
+Fibers | 09/09/2025 08:03:26 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:03:28 PM | INFO  |  Good fibers: 99546, Fraction of good pixels 0.9715925843871718
+Fibers | 09/09/2025 08:03:35 PM | INFO  |   Remaining fraction after removing continuum sources 0.37226006067546663 
+Fibers | 09/09/2025 08:03:36 PM | INFO  |  working on shotid: 20231016011
+Fibers | 09/09/2025 08:04:17 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:04:19 PM | INFO  |  Good fibers: 99540, Fraction of good pixels 0.9712972918669122
+Fibers | 09/09/2025 08:04:25 PM | INFO  |   Remaining fraction after removing continuum sources 0.6421539079766928 
+Fibers | 09/09/2025 08:04:27 PM | INFO  |  working on shotid: 20231016012
+Fibers | 09/09/2025 08:05:03 PM | INFO  |  Total fibers: 104160
+Fibers | 09/09/2025 08:05:04 PM | INFO  |  Good fibers: 99543, Fraction of good pixels 0.9712962854143048
+Fibers | 09/09/2025 08:05:11 PM | INFO  |   Remaining fraction after removing continuum sources 0.6193805692012497 
+Fibers | 09/09/2025 08:05:13 PM | INFO  |  working on shotid: 20231016013
+Traceback (most recent call last):
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/table.py", line 1405, in _convert_data_to_col
+    col = col_cls(
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/column.py", line 1255, in __new__
+    self = super().__new__(
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/column.py", line 563, in __new__
+    self_data = np.array(data, dtype=dtype, copy=copy)
+numpy.core._exceptions._ArrayMemoryError: Unable to allocate 410. MiB for an array with shape (104160, 1032) and data type float32
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/work/06536/qezlou/hetdex/packs/private-het-data/scripts/get_cov.py", line 17, in <module>
+    fibs.get_cov()
+  File "/work/06536/qezlou/hetdex/packs/private-het-data/src/het_cov/fibers.py", line 182, in get_cov
+    fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+  File "/work/06536/qezlou/hetdex/packs/private-het-data/src/het_cov/fibers.py", line 118, in get_fibers_one_shot
+    fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',verbose=False, add_rescor=False)['fiber_id','calfib_ffsky','calfibe']
+  File "/work/06536/qezlou/hetdex/packs/hetdex_api/hetdex_api/shot.py", line 789, in get_fibers_table
+    fibers_table = Table(fileh.root.Data.Fibers.read())
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/table.py", line 891, in __init__
+    init_func(data, names, dtype, n_cols, copy)
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/table.py", line 1432, in _init_from_ndarray
+    self._init_from_list(cols, names, dtype, n_cols, copy)
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/table.py", line 1255, in _init_from_list
+    col = self._convert_data_to_col(col, copy, default_name, dt, name)
+  File "/home1/06536/qezlou/miniconda3/envs/hetdata/lib/python3.10/site-packages/astropy/table/table.py", line 1414, in _convert_data_to_col
+    raise ValueError("unable to convert data to Column for Table")
+ValueError: unable to convert data to Column for Table

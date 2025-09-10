@@ -132,7 +132,7 @@ class Fibers():
         
         fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
         fib_tab.remove_column('calfibe')
-        self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}')
+        self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}")
         del mask_bad_pixs
 
         #4.  Remove strong continuum sources, from Mahan's code and Elixer

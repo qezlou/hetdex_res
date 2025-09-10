@@ -1,0 +1,10 @@
+v320-024.ls6.tacc.utexas.edu
+/work/06536/qezlou/hetdex/packs/private-het-data/scripts
+Tue Sep  9 18:49:50 CDT 2025
+Traceback (most recent call last):
+  File "/work/06536/qezlou/hetdex/packs/private-het-data/scripts/get_cov.py", line 11, in <module>
+    from het_cov import fibers
+  File "/work/06536/qezlou/hetdex/packs/private-het-data/src/het_cov/fibers.py", line 135
+    self.logger.info(f'Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}')
+                                                                                                                ^^^^^^^^^^^^
+SyntaxError: f-string: unmatched '['
