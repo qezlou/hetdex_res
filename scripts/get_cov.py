@@ -1,6 +1,7 @@
 # I cannot pip install on the Hub
 import sys
 import os
+import praser
 
 # Determine if we are on the Hub by checking for a specific environment variable
 if 'JUPYTERHUB_USER' in os.environ:
@@ -11,11 +12,24 @@ else:
     from het_cov import fibers
     data_dir = '/work/06536/qezlou/hetdex/data/'
 
+def run(bad_fibs=True, bad_pix=True, strong_cont=True):
+    fibs = fibers.Fibers(data_dir, logging_level='INFO')
 
-fibs = fibers.Fibers(data_dir)
 
+    masking={'bad_fibers': bad_fibs, 'bad_pixels': bad_pix, 'strong_continuum': strong_cont}
 
-masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}
-save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
+    if strong_cont:
+        save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
+    elif bad_fibs:
+        save_File = 'cov_calfib_ffsky_rmvd_bad_fibs.h5'
+    
+    fibs.get_cov(save_file=save_File, masking=masking)
 
-fibs.get_cov()
+if __name__ == "__main__":
+    parser = praser.ArgumentParser(description="Compute covariance matrices with optional masking.")
+    parser.add_argument('--bad_fibs', action='store_true', type=int, help="Mask bad fibers if set.")
+    parser.add_argument('--bad_pix', action='store_true', type=int, help="Mask bad pixels if set.")
+    parser.add_argument('--strong_cont', action='store_true', type=int, help="Mask strong continuum if set.")
+    args = parser.parse_args()
+
+    run(bad_fibs=args.bad_fibs, bad_pix=args.bad_pix, strong_cont=args.strong_cont)
