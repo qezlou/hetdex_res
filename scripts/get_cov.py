@@ -14,4 +14,8 @@ else:
 
 fibs = fibers.Fibers(data_dir)
 
+
+masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}
+save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
+
 fibs.get_cov()

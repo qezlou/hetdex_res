@@ -180,7 +180,7 @@ class Fibers():
 
         return fib_tab
 
-    def get_fibers(self):
+    def get_fibers(self, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}):
         """
         Iterate over all shotids and save the `calfib_ffsky` spectra
         for each shotid in a separate h5 file.
@@ -190,7 +190,7 @@ class Fibers():
             with h5py.File(op.join(f'calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['calfib_ffsky'] = fib_tab['calfib_ffsky']
 
-    def get_cov(self, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
+    def get_cov(self, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
         """
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
