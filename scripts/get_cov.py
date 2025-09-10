@@ -27,9 +27,9 @@ def run(bad_fibs=True, bad_pix=True, strong_cont=True):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute covariance matrices with optional masking.")
-    parser.add_argument('--bad_fibs', action='store_true', help="Mask bad fibers if set.", type=int)
-    parser.add_argument('--bad_pix', action='store_true', help="Mask bad pixels if set.", type=int)
-    parser.add_argument('--strong_cont', action='store_true', help="Mask strong continuum if set.", type=int)
+    parser.add_argument('--bad_fibs', type=int, help="Mask bad fibers if set.")
+    parser.add_argument('--bad_pix', type=int, help="Mask bad pixels if set.")
+    parser.add_argument('--strong_cont', type=int, help="Mask strong continuum if set.")
     args = parser.parse_args()
 
     run(bad_fibs=args.bad_fibs, bad_pix=args.bad_pix, strong_cont=args.strong_cont)
