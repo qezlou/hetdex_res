@@ -9,4 +9,4 @@
 
 hostname; pwd; date
 
-python get_cov.py
+python get_cov.py --bad_fibs 1 --bad_pix 1 --strong_cont 1
