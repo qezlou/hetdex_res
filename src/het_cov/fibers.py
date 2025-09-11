@@ -15,6 +15,7 @@ import time
 import logging
 import sys
 from sklearn.decomposition import PCA
+import json
 
 
 class Fibers():
@@ -180,31 +181,34 @@ class Fibers():
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
         cov_path = op.join(self.save_dir, save_file)
-        progress = 0
+        
         if self.cov_options['per'] == 'shot':
-            if op.exists(cov_path):
-                cov_all, shotids_in_cov = self.load_cov(cov_path)
-                if cov_all.shape[0] != len(self.shotids_list):
-                    shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
-                    progress = len(shotids_in_cov)
+            if self.cov_options['method'] == 'full':
+                if op.exists(cov_path):
+                    cov_all, shotids_in_cov = self.load_cov(cov_path)
+                    if len(shotids_in_cov) != len(self.shotids_list):
+                        shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
+                        progress = len(shotids_in_cov)
+                    else:
+                        return cov_all, shotids_in_cov
                 else:
-                    return cov_all, shotids_in_cov
-            else:
-                shotids_remaining = self.shotids_list
-            self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
-            for i, shotid in enumerate(shotids_remaining):
-                self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
-                fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
-                if 'cov_all' in locals():
-                    cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
-                    shotids_in_cov = np.append(shotids_in_cov, shotid)
-                else:
-                    cov_all = self.get_cov_one_shot(fib_spec)[None,:,:]
-                    shotids_in_cov = np.array([shotid])[None,:]
-                if i%10 ==0:
-                    self.save_cov(cov_path, cov_all, shotids_in_cov)
-                progress += 1
-            self.save_cov(cov_path, cov_all, shotids_in_cov)
+                    shotids_remaining = self.shotids_list
+                    progress = 0
+
+                self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
+                for i, shotid in enumerate(shotids_remaining):
+                    self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
+                    fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+                    if 'cov_all' in locals():
+                        cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
+                        shotids_in_cov = np.append(shotids_in_cov, shotid)
+                    else:
+                        cov_all = self.get_cov_one_shot(fib_spec)[None,:,:]
+                        shotids_in_cov = np.array([shotid])[None,:]
+                    if i%10 ==0:
+                        self.save_cov(cov_path, cov_all, shotids_in_cov)
+                    progress += 1
+                self.save_cov(cov_path, cov_all, shotids_in_cov)
         else:
             self.logger.error('Currently only per shot covariance is implemented')
             raise NotImplementedError
@@ -282,11 +286,144 @@ class Fibers():
             self.logger.error(f'Covariance file {cov_path} does not exist.')
             return None
 
+    def do_pca(self, save_file='pca.h5'):
+        
+        pca_path = op.join(self.save_dir, save_file)
+        progress = 0
+        if self.cov_options['per'] == 'shot':
+            if op.exists(pca_path):
+                comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca = self.load_pca(pca_path)
+                if comp_all.shape[0] != len(self.shotids_list):
+                    shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
+                    progress = len(shotids_in_cov)
+                else:
+                    return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca
+            else:
+                shotids_remaining = self.shotids_list
+            self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
+            for i, shotid in enumerate(shotids_remaining):
+                self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
+                fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+                if 'comp_all' in locals():
+                    comp, var, var_ratio, mean = self.get_pca_one_shot(fib_spec)
+                    comp_all = np.append(comp_all, comp[None,:,:], axis=0)
+                    var_all = np.append(var_all, var[None,:], axis=0)
+                    var_ratio_all = np.append(var_ratio_all, var_ratio[None,:], axis=0)
+                    mean_all = np.append(mean_all, mean[None,:], axis=0)
+                    shotids_in_pca = np.append(shotids_in_pca, shotid)
+                else:
+                    comp_all, var_all, var_ratio_all, mean_all = self.get_pca_one_shot(fib_spec)
+                    comp_all = comp_all[None,:,:]
+                    var_all = var_all[None,:]
+                    var_ratio_all = var_ratio_all[None,:]
+                    mean_all = mean_all[None,:]
+                    shotids_in_cov = np.array([shotid])[None,:]
+                if i%10 ==0:
+                    self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca)
+                progress += 1
+            self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca)
+        else:
+            self.logger.error('Currently only per shot covariance is implemented')
+            raise NotImplementedError
+
+        return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca
+
+    def get_pca_one_shot(self, fib_spec):
+        """
+        Apply PCA to a given set of fiber spectra.
+        Parameters
+        ----------
+        fib_spec : np.ndarray, shape (N_fibers, N_wavelengths)
+            Array containing the fiber spectra.
+        Returns
+        -------
+        components : np.ndarray, shape (N_components, N_wavelengths)
+            Principal components.
+        explained_variance : np.ndarray, shape (N_components,)
+            Explained variance for each principal component.
+        explained_variance_ratio : np.ndarray, shape (N_components,)
+            Explained variance ratio for each principal component.
+        mean_spectrum : np.ndarray, shape (N_wavelengths,)
+            Mean spectrum across all fibers.
+        """
+
+        if 'l' not in self.cov_options or self.cov_options['l'] is None:
+            raise ValueError("The number of PCA components 'l' must be specified in cov_options.")
+        n_components = self.cov_options['l']
+        # Step 1: Fit PCA
+        pca = PCA(n_components=n_components)
+        _ = pca.fit_transform(fib_spec)            # shape: (n_fibers, k)
+        components = pca.components_                     # shape: (k, m)
+        explained_variance = pca.explained_variance_     # shape: (k,)
+        explained_variance_ratio = pca.explained_variance_ratio_  # shape: (k,)
+        mean_spectrum = pca.mean_                        # shape: (m,)
+
+        self.logger.info(f'Explained variance ratio by top {n_components} components: {np.sum(pca.explained_variance_ratio_):.4f}')
+        
+        return components, explained_variance, explained_variance_ratio, mean_spectrum
+
+    def save_pca(self, pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca):
+        """
+        Save PCA results to disk.
+        """
+        self.logger.info(f'saving pca in {pca_path}')
+        with h5py.File(pca_path, 'w') as fw:
+            fw['components'] = comp_all
+            fw['explained_variance'] = var_all
+            fw['explained_variance_ratio'] = var_ratio_all
+            fw['mean_spectrum'] = mean_all
+            fw['shotid'] = shotids_in_pca
+            fw.attrs['masking'] = json.dumps(self.masking)
+            fw.attrs['cov_options'] = json.dumps(self.cov_options)
+
+
+    def load_pca(self, pca_path):
+        """
+        Load PCA results from disk.
+        """
+        if op.exists(pca_path):
+            with h5py.File(pca_path, 'r') as f:
+                comp_all = f['components'][:]
+                var_all = f['explained_variance'][:]
+                var_ratio_all = f['explained_variance_ratio'][:]
+                mean_all = f['mean_spectrum'][:]
+                shotids_in_pca = f['shotid'][:]
+            return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca
+        else:
+            self.logger.error(f'PCA file {pca_path} does not exist.')
+            return None
+    
+    def get_cov_from_pca(self, pca_path):
+        """
+        Compute covariance matrices from saved PCA results.
+        Parameters
+        ----------
+        pca_path : str
+            Path to the PCA results file.
+        Returns
+        -------
+        cov_matrices : np.ndarray, shape (N_shots, N_wavelengths, N_wavelengths)
+            Covariance matrices for each shot computed from PCA results.
+        shotids_in_pca : np.ndarray, shape (N_shots,)
+            Shot IDs corresponding to the covariance matrices.
+        """
+        comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca = self.load_pca(pca_path)
+        if comp_all is None:
+            return None, None
+        
+        n_shots, n_components, n_wavelengths = comp_all.shape
+        cov_matrices = np.zeros((n_shots, n_wavelengths, n_wavelengths))
+        
+        for i in range(n_shots):
+            # Reconstruct covariance matrix from PCA components and explained variance
+            cov_matrices[i] = comp_all[i].T @ (var_all[i][:, None] * comp_all[i])
+        
+        return cov_matrices, shotids_in_pca
 
 class dustin_extra_residual_cleaning():
-    def __init__():
+    def __init__(self):
         pass
-    def get_seeing_troughput(detect_ids):
+    def get_seeing_troughput(self, detect_ids):
         """
         We need to laod the detect object since the 
         cleaned HDR5 cat does not have `fwhm` and `throughput`
