@@ -15,7 +15,7 @@ else:
 def run(bad_fibs=True, bad_pix=True, strong_cont=True):
 
     masking={'bad_fibers': bad_fibs, 'bad_pixels': bad_pix, 'strong_continuum': strong_cont}
-    cov_options={'per':'shot', 'method': 'pca', 'l':10},
+    cov_options={'per':'shot', 'method': 'pca', 'l':10}
 
     fibs = fibers.Fibers(data_dir, 
                          masking=masking,
@@ -25,12 +25,12 @@ def run(bad_fibs=True, bad_pix=True, strong_cont=True):
 
     
 
-    if strong_cont:
+    if masking['strong_continuum']:
         save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
-    elif bad_fibs:
+    elif masking['bad_fibers']:
         save_File = 'cov_calfib_ffsky_rmvd_bad_fibs.h5'
     
-    fibs.get_cov(save_file=save_File, masking=masking)
+    fibs.get_cov(save_file=save_File)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute covariance matrices with optional masking.")
