@@ -181,7 +181,7 @@ class Fibers():
                 shotids_remaining = self.shotids_list
             self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
             for i, shotid in enumerate(shotids_remaining):
-                self.logger.info(f'working on shotid: {shotid}')
+                self.logger.info(f'working on shotid: {shotid}, progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
                 fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
                 if 'cov_all' in locals():
                     cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
@@ -190,7 +190,6 @@ class Fibers():
                     cov_all = self.get_cov_one_shot(fib_spec)[None,:,:]
                     shotids_in_cov = np.array([shotid])[None,:]
                 if i%10 ==0:
-                    self.logger.info(f'progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
                     self.save_cov(cov_path, cov_all, shotids_in_cov)
             self.save_cov(cov_path, cov_all, shotids_in_cov)
         else:
@@ -213,7 +212,7 @@ class Fibers():
             Covariance matrix computed from the fiber spectra.
         """
         if self.cov_options['method'] == 'full':
-            cov_matrix = self.full_cov(fib_spec)
+            cov_matrix = np.cov(fib_spec, rowvar=False)
         elif self.cov_options['method'] == 'pca':
             if 'l' not in self.cov_options or self.cov_options['l'] is None:
                 raise ValueError("The number of PCA components 'l' must be specified in cov_options.")
@@ -224,28 +223,13 @@ class Fibers():
             pca = PCA(n_components=n_components)
             X_proj = pca.fit_transform(X)            # shape: (n_fibers, k)
             X_approx = pca.inverse_transform(X_proj) # shape: (n_fibers, m)
+            self.logger.info(f'Explained variance ratio by top {n_components} components: {np.sum(pca.explained_variance_ratio_):.4f}')
 
             # Step 3: Estimate covariance of the approximated data
             cov_matrix = np.cov(X_approx, rowvar=False)
         else:
             raise ValueError("cov_method must be either 'full' or 'PCA'.")
         
-        return cov_matrix
-    def full_cov(self, fib_spec):
-        """
-        Compute the full covariance matrix for a given set of fiber spectra.
-
-        Parameters
-        ----------
-        fib_spec : np.ndarray, shape (N_fibers, N_wavelengths)
-            Array containing the fiber spectra.
-        
-        Returns
-        -------
-        cov_matrix : np.ndarray, shape (N_wavelengths, N_wavelengths)
-            Covariance matrix computed from the fiber spectra.
-        """
-        cov_matrix = np.cov(fib_spec, rowvar=False)
         return cov_matrix
 
     def save_cov(self, cov_path, cov_all, shotids_in_cov):
