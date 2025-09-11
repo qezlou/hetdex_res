@@ -23,8 +23,7 @@ class Fibers():
     Should run on both JupyterHub and Compute nodes on Lonestar6
     """
     def __init__(self, data_dir= '/work2/06536/qezlou/hetdex/data/', 
-                 masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}, 
-                 cov_options={'per':'shot', 'method': 'full', 'l':None},
+                 config=None,
                  logging_level='INFO'):
         """
         Parameters
@@ -36,10 +35,21 @@ class Fibers():
         self.data_dir = data_dir
         self.save_dir = data_dir
         self.shotids_list = self._get_shotids_list()
-        self.masking = masking
-        self.cov_options = cov_options
-        self.logger.info(f'Masking options: {masking}')
-        self.logger.info(f'Covariance options: {cov_options}')
+        # Load masking options from config or use defaults
+        self.masking = config.get('masking', {
+            'bad_fibers': True,
+            'bad_pixels': True,
+            'strong_continuum': True
+        })
+
+        # Load covariance options from config or use defaults
+        self.cov_options = config.get('cov_options', {
+            'per': 'shot',
+            'method': 'pca',
+            'l': 20
+        })
+        self.logger.info(f'Masking options: {self.masking}')
+        self.logger.info(f'Covariance options: {self.cov_options}')
 
     def configure_logging(self, logging_level='INFO', logger_name='Fibers'):
         """

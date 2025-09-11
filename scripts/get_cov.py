@@ -13,23 +13,9 @@ else:
     data_dir = '/work/06536/qezlou/hetdex/data/'
 
 def run(config, save_file):
-    # Load masking options from config or use defaults
-    masking = config.get('masking', {
-        'bad_fibers': True,
-        'bad_pixels': True,
-        'strong_continuum': True
-    })
-
-    # Load covariance options from config or use defaults
-    cov_options = config.get('cov_options', {
-        'per': 'shot',
-        'method': 'pca',
-        'l': 20
-    })
 
     fibs = fibers.Fibers(data_dir, 
-                         masking=masking,
-                         cov_options=cov_options,
+                         config = config,
                          logging_level='INFO')
 
 
@@ -51,3 +37,22 @@ if __name__ == "__main__":
         config = json.load(f)
 
     run(config, save_file=save_file)
+
+
+"""
+Example usage:
+python get_cov.py --config scripts/cov_pca.json
+Te config file (scripts/cov_pca.json) should look like:
+{
+    "masking": {
+        "bad_fibers": true,
+        "bad_pixels": true,
+        "strong_continuum": true
+    },
+    "cov_options": {
+        "per": "shot",
+        "method": "pca",
+        "l": 50
+    }
+}
+"""
