@@ -1,0 +1,12 @@
+{
+    "masking": {
+        "bad_fibers": true,
+        "bad_pixels": true,
+        "strong_continuum": true
+    },
+    "cov_options": {
+        "per": "shot",
+        "method": "pca",
+        "l": 20
+    }
+}
