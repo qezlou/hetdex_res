@@ -26,10 +26,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Slurm outputs in scripts and subdirectories
-*.out
-# Don't save config files used for testing
-./scripts/*.json
+# Slurm outputs in any directory
+**/*.out
+
+# Don't save config files used for testing in scripts directory
+scripts/*.json
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
