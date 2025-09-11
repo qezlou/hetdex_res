@@ -7,6 +7,6 @@
     "cov_options": {
         "per": "shot",
         "method": "pca",
-        "l": 20
+        "l": 50
     }
 }

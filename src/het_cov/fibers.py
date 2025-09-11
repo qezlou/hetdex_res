@@ -193,6 +193,7 @@ class Fibers():
                     shotids_in_cov = np.array([shotid])[None,:]
                 if i%10 ==0:
                     self.save_cov(cov_path, cov_all, shotids_in_cov)
+                progress += 1
             self.save_cov(cov_path, cov_all, shotids_in_cov)
         else:
             self.logger.error('Currently only per shot covariance is implemented')
