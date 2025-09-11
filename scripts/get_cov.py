@@ -13,10 +13,17 @@ else:
     data_dir = '/work/06536/qezlou/hetdex/data/'
 
 def run(bad_fibs=True, bad_pix=True, strong_cont=True):
-    fibs = fibers.Fibers(data_dir, logging_level='INFO')
-
 
     masking={'bad_fibers': bad_fibs, 'bad_pixels': bad_pix, 'strong_continuum': strong_cont}
+    cov_options={'per':'shot', 'method': 'pca', 'l':10},
+
+    fibs = fibers.Fibers(data_dir, 
+                         masking=masking,
+                         cov_options=cov_options,
+                         logging_level='INFO')
+
+
+    
 
     if strong_cont:
         save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
