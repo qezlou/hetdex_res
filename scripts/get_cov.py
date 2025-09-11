@@ -12,7 +12,7 @@ else:
     from het_cov import fibers
     data_dir = '/work/06536/qezlou/hetdex/data/'
 
-def run(config):
+def run(config, save_file):
     # Load masking options from config or use defaults
     masking = config.get('masking', {
         'bad_fibers': True,
@@ -32,22 +32,22 @@ def run(config):
                          cov_options=cov_options,
                          logging_level='INFO')
 
-    # Determine output file name based on masking settings
-    if masking.get('strong_continuum', False):
-        save_File = 'cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'
-    elif masking.get('bad_fibers', False):
-        save_File = 'cov_calfib_ffsky_rmvd_bad_fibs.h5'
-    else:
-        save_File = 'cov_default.h5'
 
-    fibs.get_cov(save_file=save_File)
+    fibs.get_cov(save_file=save_file)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute covariance matrices using a JSON config file.")
     parser.add_argument('--config', type=str, required=True, help="Path to JSON config file with options.")
     args = parser.parse_args()
 
+    # Determine output file name based on the json config file name
+    save_file = os.path.basename(args.config)
+    if save_file.endswith('.json'):
+        save_file = save_file[:-5] + '.h5'
+    else:
+        save_file = save_file + '.h5'
+
     with open(args.config, 'r') as f:
         config = json.load(f)
 
-    run(config)
+    run(config, save_file=save_file)
