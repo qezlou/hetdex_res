@@ -207,17 +207,14 @@ class Fibers():
         ----------
         fib_spec : np.ndarray, shape (N_fibers, N_wavelengths)
             Array containing the fiber spectra.
-        cov_method : str, optional
-            Method to compute covariance ('full' or 'diag'). Default is 'full'.
-
         Returns
         -------
         cov_matrix : np.ndarray, shape (N_wavelengths, N_wavelengths)
             Covariance matrix computed from the fiber spectra.
         """
-        if self.cov_method == 'full':
+        if self.cov_options['method'] == 'full':
             cov_matrix = self.full_cov(fib_spec)
-        elif self.cov_method == 'pca':
+        elif self.cov_options['method'] == 'pca':
             if 'l' not in self.cov_options or self.cov_options['l'] is None:
                 raise ValueError("The number of PCA components 'l' must be specified in cov_options.")
             n_components = self.cov_options['l']
