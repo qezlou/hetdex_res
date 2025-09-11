@@ -294,8 +294,8 @@ class Fibers():
             if op.exists(pca_path):
                 comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca = self.load_pca(pca_path)
                 if comp_all.shape[0] != len(self.shotids_list):
-                    shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
-                    progress = len(shotids_in_cov)
+                    shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_pca)
+                    progress = len(shotids_in_pca)
                 else:
                     return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca
             else:
@@ -317,7 +317,8 @@ class Fibers():
                     var_all = var_all[None,:]
                     var_ratio_all = var_ratio_all[None,:]
                     mean_all = mean_all[None,:]
-                    shotids_in_cov = np.array([shotid])[None,:]
+                    shotids_in_pca = np.array([shotid])[None,:]
+
                 if i%10 ==0:
                     self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca)
                 progress += 1
