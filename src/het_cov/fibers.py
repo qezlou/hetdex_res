@@ -170,18 +170,20 @@ class Fibers():
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
         cov_path = op.join(self.save_dir, save_file)
+        progress = 0
         if self.cov_options['per'] == 'shot':
             if op.exists(cov_path):
                 cov_all, shotids_in_cov = self.load_cov(cov_path)
                 if cov_all.shape[0] != len(self.shotids_list):
                     shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
+                    progress = len(shotids_in_cov)
                 else:
                     return cov_all, shotids_in_cov
             else:
                 shotids_remaining = self.shotids_list
             self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
             for i, shotid in enumerate(shotids_remaining):
-                self.logger.info(f'working on shotid: {shotid}, progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
+                self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
                 fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
                 if 'cov_all' in locals():
                     cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
