@@ -230,11 +230,9 @@ class Fibers():
             if 'l' not in self.cov_options or self.cov_options['l'] is None:
                 raise ValueError("The number of PCA components 'l' must be specified in cov_options.")
             n_components = self.cov_options['l']
-            # Step 1: Center data (PCA does this internally too)
-            X = fib_spec - np.mean(fib_spec, axis=0)
-            # Step 2: Fit PCA
+            # Step 1: Fit PCA
             pca = PCA(n_components=n_components)
-            X_proj = pca.fit_transform(X)            # shape: (n_fibers, k)
+            X_proj = pca.fit_transform(fib_spec)            # shape: (n_fibers, k)
             X_approx = pca.inverse_transform(X_proj) # shape: (n_fibers, m)
             self.logger.info(f'Explained variance ratio by top {n_components} components: {np.sum(pca.explained_variance_ratio_):.4f}')
 
