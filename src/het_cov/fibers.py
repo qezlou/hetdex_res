@@ -14,6 +14,7 @@ from glob import glob
 import time
 import logging
 import sys
+from sklearn.decomposition import PCA
 
 
 class Fibers():
@@ -21,7 +22,10 @@ class Fibers():
     Getting all "good fibers" spectra for all shots in HDR5
     Should run on both JupyterHub and Compute nodes on Lonestar6
     """
-    def __init__(self, data_dir= '/work2/06536/qezlou/hetdex/data/', logging_level='INFO'):
+    def __init__(self, data_dir= '/work2/06536/qezlou/hetdex/data/', 
+                 masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}, 
+                 cov_options={'per':'shot', 'method': 'full', 'l':None},
+                 logging_level='INFO'):
         """
         Parameters
         ----------
@@ -32,7 +36,10 @@ class Fibers():
         self.data_dir = data_dir
         self.save_dir = data_dir
         self.shotids_list = self._get_shotids_list()
-
+        self.masking = masking
+        self.cov_options = cov_options
+        self.logger.info(f'Masking options: {masking}')
+        self.logger.info(f'Covariance options: {cov_options}')
 
     def configure_logging(self, logging_level='INFO', logger_name='Fibers'):
         """
@@ -88,40 +95,7 @@ class Fibers():
         self.logger.info(f'we have {len(shotids_list)} shotids in total')
         return shotids_list
 
-
-    def _deprecated_load_shotids_list(self):
-        """
-        Load the shotid list from a h5 file that was generated with 
-        `hetdex_api.detections.Detections`
-        """
-        shotids_path = op.join(self.data_dir, 'hdr5_shotid_list.h5')
-        if op.exists(shotids_path):
-            self.logger.debug(f'loading shotids from {shotids_path}')
-            with h5py.File(shotids_path,'r') as f:
-                shotids_list = f['shotid'][:]
-        else:
-            self.logger.info(f'Shotid list not found, generating it now, an will svave at {shotids_path}')
-            shotids_list = self._get_shotids_list(shotids_path)
-        return shotids_list
-
-    def _deprecated_get_shotids_list(self, shotids_path):
-        """
-        Load the shotid list from a h5 file that was generated with 
-        `hetdex_api.detections.Detections`
-        """
-        # Get shot_ids for HDR5
-        # NOTE: This is a bit slow
-        detects_obj = Detections(loadtable=True)
-        self.logger.info(detects_obj.survey)
-        detect_table = detects_obj.return_astropy_table()
-        del detects_obj
-        shotids_list = np.unique(detect_table['shotid'])
-        del detect_table
-        self.logger.info(f'we have {len(shotids_list)} shotids')
-        with h5py.File(shotids_path,'w') as fw:
-            fw['shotid'] = shotids_list
-
-    def get_fibers_one_shot(self, shotid, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}):
+    def get_fibers_one_shot(self, shotid):
         """
         Get fiber table for a single shot
         Parameters
@@ -144,7 +118,7 @@ class Fibers():
         self.logger.info(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
 
-        if masking['bad_pixels']:
+        if self.masking['bad_pixels']:
             # 3. Find the bad pixels for each fiber. this includes cosmic rays.
             # They are fibers with non-positive calfib error.
             # We replace the flux value by the median, but
@@ -156,7 +130,7 @@ class Fibers():
             self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}")
             del mask_bad_pixs
         
-        if masking['strong_continuum']:
+        if self.masking['strong_continuum']:
             #4.  Remove strong continuum sources, from Mahan's code and Elixer
             wl = np.linspace(3470,5540,1036)
             wl_vac=SU.air_to_vac(wl)
@@ -180,7 +154,7 @@ class Fibers():
 
         return fib_tab
 
-    def get_fibers(self, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}):
+    def get_fibers(self):
         """
         Iterate over all shotids and save the `calfib_ffsky` spectra
         for each shotid in a separate h5 file.
@@ -190,36 +164,92 @@ class Fibers():
             with h5py.File(op.join(f'calfib_ffsky_{shotid}.h5'), 'w') as fw:
                 fw['calfib_ffsky'] = fib_tab['calfib_ffsky']
 
-    def get_cov(self, masking={'bad_fibers': True, 'bad_pixels': True, 'strong_continuum': True}, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
+    def get_cov(self, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
         """
         Iterate over all shotids and compute the covariance matrix
         for the `calfib_ffsky` spectra and save it in a separate h5 file.
         """
         cov_path = op.join(self.save_dir, save_file)
-        if op.exists(cov_path):
-            cov_all, shotids_in_cov = self.load_cov(cov_path)
-            if cov_all.shape[0] != len(self.shotids_list):
-                shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
+        if self.cov_options['per'] == 'shot':
+            if op.exists(cov_path):
+                cov_all, shotids_in_cov = self.load_cov(cov_path)
+                if cov_all.shape[0] != len(self.shotids_list):
+                    shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_cov)
+                else:
+                    return cov_all, shotids_in_cov
             else:
-                return cov_all, shotids_in_cov
+                shotids_remaining = self.shotids_list
+            self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
+            for i, shotid in enumerate(shotids_remaining):
+                self.logger.info(f'working on shotid: {shotid}')
+                fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+                if 'cov_all' in locals():
+                    cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
+                    shotids_in_cov = np.append(shotids_in_cov, shotid)
+                else:
+                    cov_all = self.get_cov_one_shot(fib_spec)[None,:,:]
+                    shotids_in_cov = np.array([shotid])[None,:]
+                if i%10 ==0:
+                    self.logger.info(f'progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
+                    self.save_cov(cov_path, cov_all, shotids_in_cov)
+            self.save_cov(cov_path, cov_all, shotids_in_cov)
         else:
-             shotids_remaining = self.shotids_list
-        self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
-        for i, shotid in enumerate(shotids_remaining):
-            self.logger.info(f'working on shotid: {shotid}')
-            fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
-            if 'cov_all' in locals():
-                cov_all= np.append(cov_all, np.cov(fib_spec, rowvar=False)[None,:,:], axis=0)
-                shotids_in_cov = np.append(shotids_in_cov, shotid)
-            else:
-                cov_all = np.cov(fib_spec, rowvar=False)[None,:,:]
-                shotids_in_cov = np.array([shotid])[None,:]
-            if i%10 ==0:
-                self.logger.info(f'progress {len(shotids_in_cov)}/{len(self.shotids_list)}')
-                self.save_cov(cov_path, cov_all, shotids_in_cov)
-        self.save_cov(cov_path, cov_all, shotids_in_cov)
+            self.logger.error('Currently only per shot covariance is implemented')
+            raise NotImplementedError
 
         return cov_all, shotids_in_cov
+
+    def get_cov_one_shot(self, fib_spec):
+        """
+        Compute the covariance matrix for a given set of fiber spectra.
+
+        Parameters
+        ----------
+        fib_spec : np.ndarray, shape (N_fibers, N_wavelengths)
+            Array containing the fiber spectra.
+        cov_method : str, optional
+            Method to compute covariance ('full' or 'diag'). Default is 'full'.
+
+        Returns
+        -------
+        cov_matrix : np.ndarray, shape (N_wavelengths, N_wavelengths)
+            Covariance matrix computed from the fiber spectra.
+        """
+        if self.cov_method == 'full':
+            cov_matrix = self.full_cov(fib_spec)
+        elif self.cov_method == 'pca':
+            if 'l' not in self.cov_options or self.cov_options['l'] is None:
+                raise ValueError("The number of PCA components 'l' must be specified in cov_options.")
+            n_components = self.cov_options['l']
+            # Step 1: Center data (PCA does this internally too)
+            X = fib_spec - np.mean(fib_spec, axis=0)
+            # Step 2: Fit PCA
+            pca = PCA(n_components=n_components)
+            X_proj = pca.fit_transform(X)            # shape: (n_fibers, k)
+            X_approx = pca.inverse_transform(X_proj) # shape: (n_fibers, m)
+
+            # Step 3: Estimate covariance of the approximated data
+            cov_matrix = np.cov(X_approx, rowvar=False)
+        else:
+            raise ValueError("cov_method must be either 'full' or 'PCA'.")
+        
+        return cov_matrix
+    def full_cov(self, fib_spec):
+        """
+        Compute the full covariance matrix for a given set of fiber spectra.
+
+        Parameters
+        ----------
+        fib_spec : np.ndarray, shape (N_fibers, N_wavelengths)
+            Array containing the fiber spectra.
+        
+        Returns
+        -------
+        cov_matrix : np.ndarray, shape (N_wavelengths, N_wavelengths)
+            Covariance matrix computed from the fiber spectra.
+        """
+        cov_matrix = np.cov(fib_spec, rowvar=False)
+        return cov_matrix
 
     def save_cov(self, cov_path, cov_all, shotids_in_cov):
         """
