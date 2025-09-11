@@ -18,8 +18,10 @@ def run(config, save_file):
                          config = config,
                          logging_level='INFO')
 
-
-    fibs.get_cov(save_file=save_file)
+    if config.get('method', None) == 'pca':
+        fibs.do_pca()
+    elif config.get('method', None) == 'full':
+        fibs.get_cov(save_file=save_file)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute covariance matrices using a JSON config file.")
