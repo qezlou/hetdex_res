@@ -18,10 +18,10 @@ def run(config, save_file):
                          config = config,
                          logging_level='INFO')
 
-    if config.get('method', None) == 'pca':
+    if fibs.cov_options['method'] == 'pca':
         fibs.logger.info("Running PCA method")
         fibs.do_pca()
-    elif config.get('method', None) == 'full':
+    elif fibs.cov_options['method'] == 'full':
         fibs.logger.info("Running full covariance method")
         fibs.get_cov(save_file=save_file)
 
