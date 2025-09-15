@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "het_cov"
 version = "0.1.0"
 description = ""
-authors = [{ name = "", email = "" }]
-readme = ""
+authors = [{ name = "Mahdi (Sum) Qezlou", email = "sumqezlou@gmail.com" }]
+readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
     "scikit-learn",
