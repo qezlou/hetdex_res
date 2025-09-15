@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "het_cov"
+version = "0.1.0"
+description = ""
+authors = [{ name = "", email = "" }]
+readme = ""
+requires-python = ">=3.7"
+dependencies = [
+    "scikit-learn",
+    "numpy",
+    "scipy",
+    "h5py",
+    "matplotlib"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
