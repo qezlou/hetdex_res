@@ -7,6 +7,7 @@ import numpy as np
 from os import path as op
 import sys
 import matplotlib.pyplot as plt
+import json
 
 
 class Plot():
@@ -260,3 +261,185 @@ class Plot():
 
         plt.tight_layout()
         plt.show()
+
+class PCA():
+    """
+    Class to plot the PCA results.
+    """
+    def __init__(self, data_dir='/home/qezlou/HD1/data_het/data/emmission/', logging_level='INFO'):
+        """
+        Parameters
+        ----------
+        data_dir: str
+            Directory where the h5 file with shotid list is located
+        """
+        self.logger = self.configure_logging(logging_level=logging_level, logger_name='plot.PCA')
+        self.data_dir = data_dir
+        with h5py.File(f'{data_dir}/wave.h5', 'r') as f:
+            self.wave = f['wave'][:]
+
+        with h5py.File(f'{data_dir}/pca.h5', 'r') as f:
+            self.components = f['components'][:]
+            self.explained_variance = f['explained_variance'][:]
+            self.explained_variance_ratio = f['explained_variance_ratio'][:]
+            self.mean = f['mean_spectrum'][:]
+            self.shotids = f['shotid'][:]
+        
+        self.logger.info(f'Loaded PCA results for {self.shotids.size} shots.')
+
+    def configure_logging(self, logging_level='INFO', logger_name='Plot-PCA'):
+        """
+        Set up logging based on the provided logging level in an MPI environment.
+
+        Parameters
+        ----------
+        logging_level : str, optional
+            The logging level (default is 'INFO').
+        logger_name : str, optional
+            The name of the logger (default is 'BaseGal').
+
+        Returns
+        -------
+        logger : logging.Logger
+            Configured logger instance.
+        """
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(logging_level)
+
+        # Create a console handler with flushing
+        console_handler = logging.StreamHandler(sys.stdout)
+
+        # Include Rank, Logger Name, Timestamp, and Message in format
+        formatter = logging.Formatter(
+            f'%(name)s | %(asctime)s | %(levelname)s  |  %(message)s',
+            datefmt='%m/%d/%Y %I:%M:%S %p'
+        )
+        console_handler.setFormatter(formatter)
+
+        # Ensure logs flush immediately
+        console_handler.flush = sys.stdout.flush  
+
+        # Add handler to logger
+        logger.addHandler(console_handler)
+        
+        return logger
+
+    def variance_vs_components(self):
+        """
+        Plot the explained variance ratio.
+        """
+        fig, ax = plt.subplots(figsize=(3,4))
+        ax.plot(np.arange(1, self.explained_variance_ratio.shape[1]+1), 
+                np.cumsum(self.explained_variance_ratio[0,:]))
+        ax.set_xlabel('Number of Components')
+        ax.set_ylabel('Cumulative Var ratio')
+        ax.set_title('var ratio')
+        ax.grid()
+        fig.tight_layout()
+
+    def individual_eigenspectrum(self):
+        """
+        Plot the first 50 eigen-spectra.
+        """
+        # Plot the first 50 components
+        fig, ax = plt.subplots(25,2, figsize=(12,50))
+        rand_shots = np.random.randint(0, self.shotids.size, size=3)
+        for i in rand_shots:
+            for c in range(50):
+                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], alpha=0.5)
+                ax[c//2, c%2].set_title(f'Component {c+1}')
+                ax[c//2, c%2].set_ylim(-0.05, 0.1)
+                ax[c//2, c%2].set_xlabel('Wavelength (Å)')
+                ax[c//2, c%2].set_ylabel(r'$v \times V [erg/s/cm^2]$')
+        fig.tight_layout()
+
+    
+    def project_onto_pca(self, spectrum, n_components=10):
+        """
+        Project a given spectrum onto the PCA components.
+
+        Parameters
+        ----------
+        spectrum : array-like
+            The input spectrum to project.
+        n_components : int
+            Number of PCA components to use for projection.
+
+        Returns
+        -------
+        projected_spectrum : array-like
+            The reconstructed spectrum from the PCA components.
+        """
+        if n_components > self.components.shape[1]:
+            raise ValueError(f"n_components {n_components} exceeds available components {self.components.shape[1]}")
+
+        # Center the input spectrum by subtracting the mean spectrum
+        centered_spectrum = spectrum - self.mean
+
+        # Project onto the first n_components PCA components
+        projection = centered_spectrum @ self.components[:n_components].T
+
+        # Reconstruct the spectrum from the projection
+        reconstructed_spectrum = projection @ self.components[:n_components] + self.mean
+
+        return reconstructed_spectrum
+    
+    def orig_vs_recon(self, shotid, n_components=10, n_fibers=5):
+        """
+        NOTE: You need acccess to HETDEX-API to run this function.
+        Plot the original vs reconstructed spectrum for a given shotid.
+
+        Parameters
+        ----------
+        shotid : int
+            The shotid to plot.
+        n_components : int
+            Number of PCA components to use for reconstruction.
+        n_fibers : int
+            Number of fibers to randomly select from the shot.
+        """
+        from . import fibers
+        config = {
+            "masking": {
+                "bad_fibers": True,
+                "bad_pixels": True,
+                "strong_continuum": True
+            },
+            "cov_options": {
+                "per": "shot",
+                "method": "pca",
+                "l": 50
+            }
+            }
+        fibs = fibers.Fibers(self.data_dir, 
+                             config=config,
+                             logging_level='INFO')
+
+        if shotid not in self.shotids:
+            raise ValueError(f"shotid {shotid} not found in the dataset.")
+
+        ind = np.where(self.shotids == shotid)[0][0]
+
+        # Load the original fiber spectrum and subsample from it
+        orig_fiber_specs = fibs.get_fibers_one_shot(shotid)['calfib_ffsky']
+        orig_fiber_specs = np.random.choice(orig_fiber_specs, size=n_fibers, replace=False)
+
+        # Project and reconstruct the spectrum
+        recon_fiber_specs = []
+        for orig_fiber_spec in orig_fiber_specs:
+            recon_fiber_specs.append(self.project_onto_pca(orig_fiber_spec, n_components=n_components))
+
+        # Plot original vs reconstructed
+        fig, ax = plt.subplots(figsize=(10, 6))
+        for i in range(n_fibers):
+            recon_fiber_spec = recon_fiber_specs[i]
+            orig_fiber_spec = orig_fiber_specs[i]
+            ax.plot(self.wave, orig_fiber_spec, label='Original Spectrum', alpha=0.7)
+            ax.plot(self.wave, recon_fiber_spec, label=f'Reconstructed Spectrum ({n_components} PCs)', alpha=0.7)
+
+        ax.set_xlabel('Wavelength (Å)')
+        ax.set_ylabel('Flux')
+        ax.legend()
+        ax.grid()
+        fig.tight_layout()
+
