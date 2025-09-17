@@ -1,7 +1,0 @@
-v320-024.ls6.tacc.utexas.edu
-/work/06536/qezlou/hetdex/packs/private-het-data/scripts
-Tue Sep  9 22:35:29 CDT 2025
-Traceback (most recent call last):
-  File "/work/06536/qezlou/hetdex/packs/private-het-data/scripts/get_cov.py", line 11, in <module>
-    from het_cov import fibers
-ModuleNotFoundError: No module named 'het_cov'
