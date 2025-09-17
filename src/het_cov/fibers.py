@@ -40,7 +40,8 @@ class Fibers():
         self.masking = config.get('masking', {
             'bad_fibers': True,
             'bad_pixels': True,
-            'strong_continuum': True
+            'strong_continuum': True,
+            'top_varying_pixels': True
         })
 
         # Load covariance options from config or use defaults
@@ -106,6 +107,30 @@ class Fibers():
         self.logger.info(f'we have {len(shotids_list)} shotids in total')
         return shotids_list
 
+    def mask_top_varying_pixels(self, fib_tab):
+        """
+        Get the top 5th and 95th percentiles of flux values among all pixels and fibers.
+        Mask pixels that have more than 0.3 of the fibers with a flux outside this range.
+        The mask is applied by replacing the flux value with the median flux that individual fiber.
+        Parameters
+        ----------
+        fib_tab: astropy Table
+            Table with fiber_id, calfib_ffsky and flag (True for good fibers)
+        Returns
+        -------
+        fib_tab: astropy Table
+            Table with fiber_id, calfib_ffsky and flag (True for good fibers)
+        """
+        percentiles = [5, 95]
+        flux_percentiles = np.percentile(fib_tab['calfib_ffsky'], percentiles)
+        outlier_mask = (fib_tab['calfib_ffsky'] < flux_percentiles[0]) | (fib_tab['calfib_ffsky'] > flux_percentiles[1])
+        outlier_fiber_counts = np.sum(outlier_mask, axis=0)
+        outlier_fiber_ratio = outlier_fiber_counts / fib_tab['calfib_ffsky'].shape[0]
+        top_varying_pixels = np.where(outlier_fiber_ratio > 0.3)[0]
+        self.logger.info(f'Identified {len(top_varying_pixels)} top varying pixels')
+        fib_tab['calfib_ffsky'][:, top_varying_pixels] = np.median(fib_tab['calfib_ffsky'], axis=1)[:, None]
+        return fib_tab
+
     def get_fibers_one_shot(self, shotid):
         """
         Get fiber table for a single shot
@@ -162,6 +187,11 @@ class Fibers():
                 valid_mask &= (medians[i] > lower_bound) & (medians[i] < ub)
             self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
             fib_tab = fib_tab[valid_mask]
+            del medians, valid_mask
+
+        if self.masking['top_varying_pixels']:
+            # 4. Mask top varying pixels across fibers
+            fib_tab = self.mask_top_varying_pixels(fib_tab)
 
         return fib_tab
 
