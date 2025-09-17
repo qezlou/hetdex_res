@@ -354,7 +354,7 @@ class PCA():
         fig.tight_layout()
 
     
-    def project_onto_pca(self, spectrum, n_components=10):
+    def project_onto_pca(self, spectrum, ind_shot, n_components=10):
         """
         Project a given spectrum onto the PCA components.
 
@@ -362,6 +362,8 @@ class PCA():
         ----------
         spectrum : array-like
             The input spectrum to project.
+        ind_shot: int
+            The index to self.shotids to query PCA eigenspectra from
         n_components : int
             Number of PCA components to use for projection.
 
@@ -374,13 +376,13 @@ class PCA():
             raise ValueError(f"n_components {n_components} exceeds available components {self.components.shape[1]}")
 
         # Center the input spectrum by subtracting the mean spectrum
-        centered_spectrum = spectrum - self.mean
+        centered_spectrum = spectrum - self.mean[ind_shot]
 
         # Project onto the first n_components PCA components
-        projection = centered_spectrum @ self.components[:n_components].T
+        projection = centered_spectrum @ self.components[ind_shot, :n_components].T
 
         # Reconstruct the spectrum from the projection
-        reconstructed_spectrum = projection @ self.components[:n_components] + self.mean
+        reconstructed_spectrum = projection @ self.components[ind_shot, :n_components] + self.mean[ind_shot]
 
         return reconstructed_spectrum
     
@@ -408,7 +410,7 @@ class PCA():
             "cov_options": {
                 "per": "shot",
                 "method": "pca",
-                "l": 50
+                "l": self.explained_variance.shape[0]
             }
             }
         fibs = fibers.Fibers(self.data_dir, 
@@ -418,28 +420,29 @@ class PCA():
         if shotid not in self.shotids:
             raise ValueError(f"shotid {shotid} not found in the dataset.")
 
-        ind = np.where(self.shotids == shotid)[0][0]
+        ind_shot = np.where(self.shotids == shotid)[0][0]
 
         # Load the original fiber spectrum and subsample from it
         orig_fiber_specs = fibs.get_fibers_one_shot(shotid)['calfib_ffsky']
-        orig_fiber_specs = np.random.choice(orig_fiber_specs, size=n_fibers, replace=False)
+        ind_fib = np.random.randint(0, orig_fiber_specs.shape[0], n_fibers)
+        orig_fiber_specs = orig_fiber_specs[ind_fib]
 
         # Project and reconstruct the spectrum
         recon_fiber_specs = []
-        for orig_fiber_spec in orig_fiber_specs:
-            recon_fiber_specs.append(self.project_onto_pca(orig_fiber_spec, n_components=n_components))
+        for i in range(n_fibers):
+            recon_fiber_specs.append(self.project_onto_pca(orig_fiber_specs[i], ind_shot=ind_shot, n_components=n_components).squeeze())
 
         # Plot original vs reconstructed
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(n_fibers, 1, figsize=(10, n_fibers*3))
         for i in range(n_fibers):
-            recon_fiber_spec = recon_fiber_specs[i]
-            orig_fiber_spec = orig_fiber_specs[i]
-            ax.plot(self.wave, orig_fiber_spec, label='Original Spectrum', alpha=0.7)
-            ax.plot(self.wave, recon_fiber_spec, label=f'Reconstructed Spectrum ({n_components} PCs)', alpha=0.7)
+            ax[i].plot(self.wave, orig_fiber_specs[i], label='Og', alpha=0.7)
+            ax[i].plot(self.wave, recon_fiber_specs[i], label=f'Recon ({n_components} PCs)', alpha=0.7)
 
-        ax.set_xlabel('Wavelength (Å)')
-        ax.set_ylabel('Flux')
-        ax.legend()
-        ax.grid()
+            ax[i].set_title(shotid)
+            ax[i].set_xlabel('Wavelength (Å)')
+            ax[i].set_ylabel('Flux')
+            ax[i].legend()
+            ax[i].grid()
         fig.tight_layout()
+        return fig
 
