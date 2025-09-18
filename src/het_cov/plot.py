@@ -387,8 +387,8 @@ class PCA():
         reconstructed_spectrum = projection @ self.components[ind_shot, :n_components] + self.mean[ind_shot]
 
         return reconstructed_spectrum
-    
-    def orig_vs_recon(self, shotid, n_components=10, n_fibers=5, top_variable_pixels=False):
+
+    def orig_vs_recon(self, shotid, n_components=10, n_fibers=5, top_varying_pixels=False):
         """
         NOTE: You need acccess to HETDEX-API to run this function.
         Plot the original vs reconstructed spectrum for a given shotid.
@@ -408,7 +408,7 @@ class PCA():
                 "bad_fibers": True,
                 "bad_pixels": True,
                 "strong_continuum": True,
-                "top_variable_pixels": top_variable_pixels
+                "top_varying_pixels": top_variable_pixels
             },
             "cov_options": {
                 "per": "shot",
