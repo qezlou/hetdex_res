@@ -266,7 +266,7 @@ class PCA():
     """
     Class to plot the PCA results.
     """
-    def __init__(self, data_dir='/home/qezlou/HD1/data_het/data/emmission/', logging_level='INFO'):
+    def __init__(self, data_dir='/home/qezlou/HD1/data_het/data/emmission/', data_file='pca.h5', logging_level='INFO'):
         """
         Parameters
         ----------
@@ -278,7 +278,7 @@ class PCA():
         with h5py.File(f'{data_dir}/wave.h5', 'r') as f:
             self.wave = f['wave'][:]
 
-        with h5py.File(f'{data_dir}/pca.h5', 'r') as f:
+        with h5py.File(op.join(data_dir, data_file), 'r') as f:
             self.components = f['components'][:]
             self.explained_variance = f['explained_variance'][:]
             self.explained_variance_ratio = f['explained_variance_ratio'][:]
@@ -329,8 +329,9 @@ class PCA():
         Plot the explained variance ratio.
         """
         fig, ax = plt.subplots(figsize=(3,4))
-        ax.plot(np.arange(1, self.explained_variance_ratio.shape[1]+1), 
-                np.cumsum(self.explained_variance_ratio[0,:]))
+        for i in range(self.explained_variance_ratio.shape[0]):
+            ax.plot(np.arange(1, self.explained_variance_ratio.shape[1]+1), 
+                    np.cumsum(self.explained_variance_ratio[i,:]))
         ax.set_xlabel('Number of Components')
         ax.set_ylabel('Cumulative Var ratio')
         ax.set_title('var ratio')
@@ -346,11 +347,12 @@ class PCA():
         rand_shots = np.random.randint(0, self.shotids.size, size=3)
         for i in rand_shots:
             for c in range(50):
-                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], alpha=0.5)
+                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], alpha=0.5, label=self.shotids[i])
                 ax[c//2, c%2].set_title(f'Component {c+1}')
                 ax[c//2, c%2].set_ylim(-0.05, 0.1)
                 ax[c//2, c%2].set_xlabel('Wavelength (Å)')
                 ax[c//2, c%2].set_ylabel(r'$v \times V [erg/s/cm^2]$')
+                ax[c//2, c%2].legend(frameon=False)
         fig.tight_layout()
 
     
