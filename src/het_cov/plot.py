@@ -449,3 +449,181 @@ class PCA():
         fig.tight_layout()
         return fig
 
+    def _get_corr(self, cov_matrix):
+        """
+        Compute the correlation matrix from a covariance matrix.
+        Parameters
+        ----------
+        cov_matrix : array-like, shape (n_pixels, n_pixels)
+            The input covariance matrix.
+        Returns
+        -------
+        corr_matrix : array-like, shape (n_pixels, n_pixels)
+            The computed correlation matrix.
+        """
+        # Compute standard deviations of each pixel
+        std_devs = np.sqrt(np.diag(cov_matrix))
+    
+        # Avoid division by zero
+        std_devs[std_devs == 0] = 1e-10
+    
+        # Compute correlation matrix
+        corr_matrix = cov_matrix / np.outer(std_devs, std_devs)
+
+        return corr_matrix
+
+    def _estimate_cov_one_shot(self, ind_shotid, n_components=None):
+        """
+        Estimate the covariance matrix from the PCA components and explained variances.
+        Parameters
+        ----------
+        ind_shotid : int
+            Index of the shotid to estimate covariance for.
+        Returns
+        -------
+        estimated_cov : array-like, shape (n_pixels, n_pixels)
+            The estimated covariance matrix.
+        """
+        if n_components is None:
+            n_components = self.components.shape[1]
+        elif n_components > self.components.shape[1]:
+            raise ValueError(f"n_components {n_components} exceeds available components {self.components.shape[1]}")
+        # Reconstruct the covariance matrix using the PCA components and explained variances
+        # shapes: n_pixels, n_components = (n_pixels, n_components) @ (n_components, n_components) @ (n_components, n_pixels)
+        cov_mat = self.components[ind_shotid, :n_components].T @ (self.explained_variance[ind_shotid, :n_components, None] * self.components[ind_shotid, :n_components])
+        corr_mat = self._get_corr(cov_mat)
+        return cov_mat, corr_mat
+
+    def estimate_cov_all_shots(self, n_components=None):
+        """
+        Estimate the covariance matrices for all shots.
+        Returns
+        -------
+        estimated_covs : array-like, shape (n_shots, n_pixels, n_pixels)
+            The estimated covariance matrices for all shots.
+        estimated_corrs : array-like, shape (n_shots, n_pixels, n_pixels)
+            The estimated correlation matrices for all shots.
+        """
+        n_shots = self.shotids.size
+        n_pixels = self.wave.size
+        estimated_covs = np.zeros((n_shots, n_pixels, n_pixels))
+        estimated_corrs = np.zeros((n_shots, n_pixels, n_pixels))
+        for i in range(n_shots):
+            estimated_covs[i], estimated_corrs[i] = self._estimate_cov_one_shot(i, n_components=n_components)
+            if i % 50 == 0:
+                self.logger.info(f'Estimated covariance for {i}/{n_shots} shots.')
+        return estimated_covs, estimated_corrs
+
+
+    def cov_corr_rand_dateshots(self, n_components=None, n=5):
+        """
+        Plot random estimated covariance and correlation matrices from PCA.
+
+        Parameters
+        ----------
+        n_components : int
+            Number of PCA components to use for estimation.
+        n : int
+            Number of random matrices to plot.
+        """
+
+        shotids = self.shotids
+    
+        fig, ax = plt.subplots(n, 2, figsize=(8, 3*n))
+        ind_rand = np.random.randint(0, shotids.size, n)
+
+        N = self.wave.shape[0]  # assuming square covariance matrices of shape (N, N)
+
+        # Pick ~5 log-spaced ticks across the full wave range
+        num_ticks = 5
+        tick_indices = np.linspace(0, N - 1, num_ticks, dtype=int)
+        tick_positions = [self.wave[i] for i in tick_indices]
+        tick_labels = [f"{self.wave[i]:.0f}" for i in tick_indices]
+
+        # Loop over each shot
+        for i, ind in enumerate(ind_rand):
+            cov, corr = self._estimate_cov_one_shot(ind, n_components=n_components)
+            ax[i, 0].set_title(f'{shotids[ind]}-cov')
+            ax[i, 1].set_title(f'{shotids[ind]}-corr')
+
+            # Show images with wavelength-scaled axes using 'extent'
+            im0 = ax[i, 0].imshow(cov[ :, :], origin='lower', cmap='viridis',
+                                aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
+            im1 = ax[i, 1].imshow(corr[:, :], origin='lower', cmap='viridis', vmin=0, vmax=1,
+                                aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
+
+            # Set wavelength ticks and labels
+            for a in [ax[i, 0], ax[i, 1]]:
+                a.set_xticks(tick_positions)
+                a.set_xticklabels(tick_labels)
+                a.set_yticks(tick_positions)
+                a.set_yticklabels(tick_labels)
+                a.set_xlabel("Wavelength")
+                a.set_ylabel("Wavelength")
+
+            fig.colorbar(im0, ax=ax[i, 0], fraction=0.046, pad=0.04)
+            fig.colorbar(im1, ax=ax[i, 1], fraction=0.046, pad=0.04)
+        fig.tight_layout()
+
+    def corr_rand_dateshots(self, n_components=None, n=5):
+        """
+        Plot random estimated correlation matrices from PCA.
+
+        Parameters
+        ----------
+        n_components : int
+            Number of PCA components to use for estimation.
+        n : int
+            Number of random matrices to plot.
+        """
+
+        shotids = self.shotids
+    
+        fig, axes = plt.subplots(n, n, figsize=(n*4, n*4))
+        ind_rand = np.random.randint(0, shotids.size, 25)
+
+        N = self.wave.shape[0]  # assuming square covariance matrices of shape (N, N)
+        # Pick ~5 log-spaced ticks across the full wave range
+        num_ticks = 5
+        tick_indices = np.linspace(0, N - 1, num_ticks, dtype=int)
+        tick_positions = [self.wave[i] for i in tick_indices]
+        tick_labels = [f"{self.wave[i]:.0f}" for i in tick_indices]
+
+        # Flatten the axes array for easier iteration
+        axes_flat = axes.flatten()
+
+        # Loop over each shot
+        for i, ind in enumerate(ind_rand):
+            _, corr = self._estimate_cov_one_shot(ind, n_components=n_components)
+            # Plot correlation matrix
+            im = axes_flat[i].imshow(corr[:, :], origin='lower', cmap='viridis', vmin=0, vmax=1,
+                                aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
+
+            axes_flat[i].set_title(f'Shot ID: {shotids[ind]}')
+            
+            # Set wavelength ticks and labels
+            axes_flat[i].set_xticks(tick_positions)
+            axes_flat[i].set_xticklabels(tick_labels, rotation=45)
+            axes_flat[i].set_yticks(tick_positions)
+            axes_flat[i].set_yticklabels(tick_labels)
+            
+            # Only add axis labels on the edge plots
+            if i % 5 == 0:  # Left edge
+                axes_flat[i].set_ylabel("Wavelength (Å)")
+            if i >= 20:  # Bottom edge
+                axes_flat[i].set_xlabel("Wavelength (Å)")
+
+        # Add colorbar to each row, positioned at the right side
+        for row in range(5):
+            # Get the last plot in the row
+            last_ax_in_row = axes[row, -1]
+            # Create a new axis for the colorbar at the right of the last plot
+            cbar_ax = fig.add_axes([last_ax_in_row.get_position().x1 + 0.01, 
+                                last_ax_in_row.get_position().y0,
+                                0.02, last_ax_in_row.get_position().y1 - last_ax_in_row.get_position().y0])
+            # Add the colorbar
+            fig.colorbar(im, cax=cbar_ax, label='Correlation')
+        plt.tight_layout()
+        # Adjust layout to make room for colorbars
+        plt.subplots_adjust(right=0.9, hspace=0.3, wspace=0.3)
+        
