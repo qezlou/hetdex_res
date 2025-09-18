@@ -408,12 +408,12 @@ class PCA():
                 "bad_fibers": True,
                 "bad_pixels": True,
                 "strong_continuum": True,
-                "top_varying_pixels": top_variable_pixels
+                "top_varying_pixels": top_varying_pixels
             },
             "cov_options": {
                 "per": "shot",
                 "method": "pca",
-                "l": self.explained_variance.shape[0]
+                "l": self.explained_variance.shape[1]
             }
             }
         fibs = fibers.Fibers(self.data_dir, 

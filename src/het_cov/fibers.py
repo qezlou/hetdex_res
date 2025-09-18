@@ -41,7 +41,10 @@ class Fibers():
             'bad_fibers': True,
             'bad_pixels': True,
             'strong_continuum': True,
-            'top_varying_pixels': True
+            'top_varying_pixels': True,
+            "top_percent":5.,
+            "top_fiber_frac":0.3
+                            
         })
 
         # Load covariance options from config or use defaults
@@ -121,12 +124,12 @@ class Fibers():
         fib_tab: astropy Table
             Table with fiber_id, calfib_ffsky and flag (True for good fibers)
         """
-        percentiles = [5, 95]
+        percentiles = [self.masking['top_percent'], 100-self.masking['top_percent']]
         flux_percentiles = np.percentile(fib_tab['calfib_ffsky'], percentiles)
         outlier_mask = (fib_tab['calfib_ffsky'] < flux_percentiles[0]) | (fib_tab['calfib_ffsky'] > flux_percentiles[1])
         outlier_fiber_counts = np.sum(outlier_mask, axis=0)
         outlier_fiber_ratio = outlier_fiber_counts / fib_tab['calfib_ffsky'].shape[0]
-        top_varying_pixels = np.where(outlier_fiber_ratio > 0.3)[0]
+        top_varying_pixels = np.where(outlier_fiber_ratio > self.masking['top_fiber_frac'])[0]
         self.logger.info(f'Identified {len(top_varying_pixels)} top varying pixels')
         fib_tab['calfib_ffsky'][:, top_varying_pixels] = np.median(fib_tab['calfib_ffsky'], axis=1)[:, None]
         return fib_tab
