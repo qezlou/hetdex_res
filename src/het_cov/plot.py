@@ -266,7 +266,7 @@ class PCA():
     """
     Class to plot the PCA results.
     """
-    def __init__(self, data_dir='/home/qezlou/HD1/data_het/data/emmission/', data_file='pca.h5', logging_level='INFO'):
+    def __init__(self, config_file, data_dir='/home/qezlou/HD1/data_het/data/emmission/', data_file='pca.h5', logging_level='INFO'):
         """
         Parameters
         ----------
@@ -284,7 +284,9 @@ class PCA():
             self.explained_variance_ratio = f['explained_variance_ratio'][:]
             self.mean = f['mean_spectrum'][:]
             self.shotids = f['shotid'][:]
-        
+        # Load the config file used to generate the PCA results
+        with open(op.join(data_dir, config_file), 'r') as f:
+            self.config = json.load(f)
         self.logger.info(f'Loaded PCA results for {self.shotids.size} shots.')
 
     def configure_logging(self, logging_level='INFO', logger_name='Plot-PCA'):
@@ -403,21 +405,9 @@ class PCA():
             Number of fibers to randomly select from the shot.
         """
         from . import fibers
-        config = {
-            "masking": {
-                "bad_fibers": True,
-                "bad_pixels": True,
-                "strong_continuum": True,
-                "top_varying_pixels": top_varying_pixels
-            },
-            "cov_options": {
-                "per": "shot",
-                "method": "pca",
-                "l": self.explained_variance.shape[1]
-            }
-            }
+
         fibs = fibers.Fibers(self.data_dir, 
-                             config=config,
+                             config=self.config,
                              logging_level='INFO')
 
         if shotid not in self.shotids:
@@ -426,7 +416,7 @@ class PCA():
         ind_shot = np.where(self.shotids == shotid)[0][0]
 
         # Load the original fiber spectrum and subsample from it
-        orig_fiber_specs = fibs.get_fibers_one_shot(shotid)['calfib_ffsky']
+        orig_fiber_specs = fibs.get_fibers_one_shot(shotid)[self.config['calfib_type']]
         ind_fib = np.random.randint(0, orig_fiber_specs.shape[0], n_fibers)
         orig_fiber_specs = orig_fiber_specs[ind_fib]
 
