@@ -277,6 +277,7 @@ class PCA():
         self.data_dir = data_dir
         with h5py.File(f'{data_dir}/wave.h5', 'r') as f:
             self.wave = f['wave'][:]
+            self.z = self.wave / 1215.67 - 1  # LyA
         self.data_file = data_file
         with h5py.File(op.join(data_dir, self.data_file), 'r') as f:
             self.components = f['components'][:]
@@ -430,7 +431,9 @@ class PCA():
         for i in range(n_fibers):
             ax[i].plot(self.wave, orig_fiber_specs[i], label='Og', alpha=0.7)
             ax[i].plot(self.wave, recon_fiber_specs[i], label=f'Recon ({n_components} PCs)', alpha=0.7)
-
+            # Add a secondary x-axis on top showing self.z
+            secax = ax[i].secondary_xaxis('top', functions=(lambda x: x / 1215.67 - 1, lambda z: (z + 1) * 1215.67))
+            secax.set_xlabel('Redshift (z)')
             ax[i].set_title(shotid)
             ax[i].set_xlabel('Wavelength (Å)')
             ax[i].set_ylabel('Flux')
