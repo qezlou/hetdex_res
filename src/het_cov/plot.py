@@ -285,7 +285,7 @@ class PCA():
             self.mean = f['mean_spectrum'][:]
             self.shotids = f['shotid'][:]
         # Load the config file used to generate the PCA results
-        with open(op.join(data_dir, config_file), 'r') as f:
+        with open(config_file, 'r') as f:
             self.config = json.load(f)
         self.logger.info(f'Loaded PCA results for {self.shotids.size} shots.')
 

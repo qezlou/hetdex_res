@@ -57,6 +57,7 @@ class Fibers():
         })
         self.logger.info(f'Masking options: {self.masking}')
         self.logger.info(f'Covariance options: {self.cov_options}')
+        self.logger.info(f'Flux, calfib_type: {self.calfib_type}')
 
     def configure_logging(self, logging_level='INFO', logger_name='Fibers'):
         """
