@@ -277,8 +277,8 @@ class PCA():
         self.data_dir = data_dir
         with h5py.File(f'{data_dir}/wave.h5', 'r') as f:
             self.wave = f['wave'][:]
-
-        with h5py.File(op.join(data_dir, data_file), 'r') as f:
+        self.data_file = data_file
+        with h5py.File(op.join(data_dir, self.data_file), 'r') as f:
             self.components = f['components'][:]
             self.explained_variance = f['explained_variance'][:]
             self.explained_variance_ratio = f['explained_variance_ratio'][:]
@@ -338,15 +338,15 @@ class PCA():
         ax.grid()
         fig.tight_layout()
 
-    def individual_eigenspectrum(self):
+    def individual_eigenspectrum(self, n_components=20):
         """
         Plot the first 50 eigen-spectra.
         """
         # Plot the first 50 components
-        fig, ax = plt.subplots(25,2, figsize=(12,50))
+        fig, ax = plt.subplots(n_components//2, 2, figsize=(12, n_components*1.5))
         rand_shots = np.random.randint(0, self.shotids.size, size=3)
         for i in rand_shots:
-            for c in range(50):
+            for c in range(n_components):
                 ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], alpha=0.5, label=self.shotids[i])
                 ax[c//2, c%2].set_title(f'Component {c+1}')
                 ax[c//2, c%2].set_ylim(-0.05, 0.1)
@@ -529,7 +529,7 @@ class PCA():
 
         shotids = self.shotids
     
-        fig, ax = plt.subplots(n, 2, figsize=(8, 3*n))
+        fig, ax = plt.subplots(n, 3, figsize=(10, 3*n))
         ind_rand = np.random.randint(0, shotids.size, n)
 
         N = self.wave.shape[0]  # assuming square covariance matrices of shape (N, N)
@@ -551,6 +551,11 @@ class PCA():
                                 aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
             im1 = ax[i, 1].imshow(corr[:, :], origin='lower', cmap='viridis', vmin=0, vmax=1,
                                 aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
+            ax[i, 2].plot(self.wave, np.diag(cov), label='Cov diag', alpha=0.7)
+            ax[i, 2].set_title(f'{shotids[ind]}-Cov Diagonal')
+            ax[i, 2].set_xlabel("Wavelength")
+            ax[i, 2].set_ylabel("Covariance Diagonal")
+            ax[i, 2].legend()
 
             # Set wavelength ticks and labels
             for a in [ax[i, 0], ax[i, 1]]:
@@ -563,6 +568,7 @@ class PCA():
 
             fig.colorbar(im0, ax=ax[i, 0], fraction=0.046, pad=0.04)
             fig.colorbar(im1, ax=ax[i, 1], fraction=0.046, pad=0.04)
+        fig.suptitle(self.data_file)
         fig.tight_layout()
 
     def corr_rand_dateshots(self, n_components=None, n=5):

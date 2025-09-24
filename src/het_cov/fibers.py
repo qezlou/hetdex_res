@@ -37,7 +37,8 @@ class Fibers():
         self.save_dir = data_dir
         self.shotids_list = self._get_shotids_list()
         # Load masking options from config or use defaults
-        self.masking = config.get('masking', {
+        self.masking = config.get(
+            'masking', {
             'bad_fibers': True,
             'bad_pixels': True,
             'strong_continuum': True,
@@ -46,7 +47,8 @@ class Fibers():
             "top_fiber_frac":0.3
                             
         })
-
+        # The calibrated flux to use: `self.calfib_type` or `calfib`
+        self.calfib_type = config.get('calfib_type', 'calfib')
         # Load covariance options from config or use defaults
         self.cov_options = config.get('cov_options', {
             'per': 'shot',
@@ -118,20 +120,20 @@ class Fibers():
         Parameters
         ----------
         fib_tab: astropy Table
-            Table with fiber_id, calfib_ffsky and flag (True for good fibers)
+            Table with fiber_id, self.calfib_type and flag (True for good fibers)
         Returns
         -------
         fib_tab: astropy Table
-            Table with fiber_id, calfib_ffsky and flag (True for good fibers)
+            Table with fiber_id, self.calfib_type and flag (True for good fibers)
         """
         percentiles = [self.masking['top_percent'], 100-self.masking['top_percent']]
-        flux_percentiles = np.percentile(fib_tab['calfib_ffsky'], percentiles)
-        outlier_mask = (fib_tab['calfib_ffsky'] < flux_percentiles[0]) | (fib_tab['calfib_ffsky'] > flux_percentiles[1])
+        flux_percentiles = np.percentile(fib_tab[self.calfib_type], percentiles)
+        outlier_mask = (fib_tab[self.calfib_type] < flux_percentiles[0]) | (fib_tab[self.calfib_type] > flux_percentiles[1])
         outlier_fiber_counts = np.sum(outlier_mask, axis=0)
-        outlier_fiber_ratio = outlier_fiber_counts / fib_tab['calfib_ffsky'].shape[0]
+        outlier_fiber_ratio = outlier_fiber_counts / fib_tab[self.calfib_type].shape[0]
         top_varying_pixels = np.where(outlier_fiber_ratio > self.masking['top_fiber_frac'])[0]
         self.logger.info(f'Identified {len(top_varying_pixels)} top varying pixels')
-        fib_tab['calfib_ffsky'][:, top_varying_pixels] = np.median(fib_tab['calfib_ffsky'], axis=1)[:, None]
+        fib_tab[self.calfib_type][:, top_varying_pixels] = np.median(fib_tab[self.calfib_type], axis=1)[:, None]
         return fib_tab
 
     def get_fibers_one_shot(self, shotid):
@@ -144,10 +146,10 @@ class Fibers():
         Returns
         -------
         fib_tab: astropy Table
-            Table with fiber_id, calfib_ffsky and flag (True for good fibers)
+            Table with fiber_id, self.calfib_type and flag (True for good fibers)
         """
-        # 1. Load the fluxes, "calfib_ffsky", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
-        keys_to_query = ['fiber_id', 'calfib_ffsky', 'calfibe']
+        # 1. Load the fluxes, "self.calfib_type", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
+        keys_to_query = ['fiber_id', self.calfib_type, 'calfibe']
         fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',
                                              verbose=False, add_rescor=False)[keys_to_query]
         F = FiberIndex(survey='hdr5') 
@@ -164,9 +166,9 @@ class Fibers():
             # NOTE: we may need to ignore these pixels altogether
             # when working on a probabilistic model
             mask_bad_pixs = fib_tab['calfibe'] <= 0
-            fib_tab['calfib_ffsky'][mask_bad_pixs] = np.median(fib_tab['calfib_ffsky'][~mask_bad_pixs], axis=0)
+            fib_tab[self.calfib_type][mask_bad_pixs] = np.median(fib_tab[self.calfib_type][~mask_bad_pixs], axis=0)
             fib_tab.remove_column('calfibe')
-            self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab['calfib_ffsky'].size}")
+            self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab[self.calfib_type].size}")
             del mask_bad_pixs
         
         if self.masking['strong_continuum']:
@@ -179,7 +181,7 @@ class Fibers():
             mask_zone4 = (4860 < wl_vac) & (wl_vac < 5090)
             mask_zone5 = (5090 < wl_vac) & (wl_vac < 5500)
 
-            medians = np.array([np.nanmedian(fib_tab['calfib_ffsky'][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
+            medians = np.array([np.nanmedian(fib_tab[self.calfib_type][:, mask], axis=1) for mask in [mask_zone1, mask_zone2, mask_zone3, mask_zone4, mask_zone5]])
             ## Remove the fiber even if one of the regions has a high continuum
             # Define different upper bounds for the blue side
             upper_bounds = [0.25, 0.08, 0.08, 0.08, 0.08]  # example values, adjust as needed
@@ -200,19 +202,21 @@ class Fibers():
 
     def get_fibers(self):
         """
-        Iterate over all shotids and save the `calfib_ffsky` spectra
+        Iterate over all shotids and save the `self.calfib_type` spectra
         for each shotid in a separate h5 file.
         """
         for shotid in self.shotids_list:
             fib_tab = self.get_fibers_one_shot(shotid)
-            with h5py.File(op.join(f'calfib_ffsky_{shotid}.h5'), 'w') as fw:
-                fw['calfib_ffsky'] = fib_tab['calfib_ffsky']
+            with h5py.File(op.join(f'{self.calfib_type}_{shotid}.h5'), 'w') as fw:
+                fw[self.calfib_type] = fib_tab[self.calfib_type]
 
-    def get_cov(self, save_file='cov_calfib_ffsky_rmvd_bad_fibs_cont.h5'):
+    def get_cov(self, save_file=None):
         """
         Iterate over all shotids and compute the covariance matrix
-        for the `calfib_ffsky` spectra and save it in a separate h5 file.
+        for the `self.calfib_type` spectra and save it in a separate h5 file.
         """
+        if save_file is None:
+            save_file = f'cov_{self.calfib_type}_rmvd_bad_fibs_cont.h5'
         cov_path = op.join(self.save_dir, save_file)
         
         if self.cov_options['per'] == 'shot':
@@ -231,7 +235,7 @@ class Fibers():
                 self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
                 for i, shotid in enumerate(shotids_remaining):
                     self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
-                    fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+                    fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
                     if 'cov_all' in locals():
                         cov_all= np.append(cov_all, self.get_cov_one_shot(fib_spec)[None,:,:], axis=0)
                         shotids_in_cov = np.append(shotids_in_cov, shotid)
@@ -294,7 +298,7 @@ class Fibers():
         """
         self.logger.info(f'saving cov in {cov_path}')
         with h5py.File(cov_path, 'w') as fw:
-            fw['cov_calfib_ffsky'] = cov_all
+            fw[f'cov_{self.calfib_type}'] = cov_all
             fw['shotid'] = shotids_in_cov
         
 
@@ -312,7 +316,7 @@ class Fibers():
         """
         if op.exists(cov_path):
             with h5py.File(cov_path, 'r') as f:
-                cov = f['cov_calfib_ffsky'][:]
+                cov = f[f'cov_{self.calfib_type}'][:]
                 shotids_in_cov = f['shotid'][:]
             return cov, shotids_in_cov
         else:
@@ -336,7 +340,7 @@ class Fibers():
             self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
             for i, shotid in enumerate(shotids_remaining):
                 self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
-                fib_spec = self.get_fibers_one_shot(shotid)['calfib_ffsky']
+                fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
                 if 'comp_all' in locals():
                     comp, var, var_ratio, mean = self.get_pca_one_shot(fib_spec)
                     comp_all = np.append(comp_all, comp[None,:,:], axis=0)
@@ -454,6 +458,7 @@ class Fibers():
         
         return cov_matrices, shotids_in_pca
 
+
 class dustin_extra_residual_cleaning():
     def __init__(self):
         pass
@@ -500,61 +505,3 @@ class dustin_extra_residual_cleaning():
             fw['shotid'] =det['shotid']
             fw['fwhm'] = det['fwhm']
             fw['throughput'] = det['throughput']
-
-        
-
-    
-
-
-
-
-class dustin_extra_residual_cleaning():
-    def __init__():
-        pass
-    def get_seeing_troughput(detect_ids):
-        """
-        We need to laod the detect object since the 
-        cleaned HDR5 cat does not have `fwhm` and `throughput`
-        for those shotids
-        NOTE: This is slow
-        """
-        # Loading the detection table is slow
-        detects_obj = Detections(loadtable=True)
-        self.logger.info(detects_obj.survey)
-        detect_table = detects_obj.return_astropy_table()
-        ind_detect_table=[]
-        # This loops over 1.6e6 sources, so very slow
-        for idet in unique_det_id:
-            ind = np.where(detect_table['detectid'] == idet)
-            ind_detect_table.append(ind)
-        det = detects_table[ind_detect_table]['shotid', 'fwhm', 'throughput']
-        self.logger.info(f'Total sources {detect_ids.size}, overlap with detect_table {id_detect_table.size}')
-        detects.hdfile.close()
-        return det
-    
-    def get_detect_ids():
-        """
-        Uset latest detected source catalog
-        """
-        # Get the latest catalog
-        cat_file = '/home/jovyan/work/hetdex/data/lae_uniq_5.0.1.fits'
-        unique_table = Table.read(cat_file)
-        unique_det_id = np.unique(unique_table['detectid'])
-        return unique_det_id
-    
-    def write_useful_info():
-        """
-        Write `shotid`s, `fwhm` and `throughput` for
-        latest LAE catalog.
-        """
-        unique_det_id = get_detect_ids()
-        det = get_seeing_troughput(unique_det_id)
-    
-        with h5py.File('cat_for_empty_fiber.h5','w') as fw:
-            fw['shotid'] =det['shotid']
-            fw['fwhm'] = det['fwhm']
-            fw['throughput'] = det['throughput']
-
-        
-
-    
