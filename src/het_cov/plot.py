@@ -342,13 +342,13 @@ class PCA():
         ax.grid()
         fig.tight_layout()
 
-    def individual_eigenspectrum(self, n_components=20, smoothing=None):
+    def individual_eigenspectrum(self, n_components=20, smoothing=None, min_shotid=2017):
         """
         Plot the first 50 eigen-spectra.
         """
         # Plot the first 50 components
         fig, ax = plt.subplots(n_components//2, 2, figsize=(12, n_components*1.5))
-        new_shotids_ind = np.where(self.shotids[:]/1e7 > 2017)[0]
+        new_shotids_ind = np.where(self.shotids[:]/1e7 > min_shotid)[0]
         rand_shots = np.random.choice(new_shotids_ind, size=3, replace=False)
         for i in rand_shots:
             for c in range(n_components):
