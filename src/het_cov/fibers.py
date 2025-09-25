@@ -221,7 +221,7 @@ class Fibers():
         means = np.mean(fib_tab[self.calfib_type], axis=0)
         stds = np.std(fib_tab[self.calfib_type], axis=0)
         fib_tab[self.calfib_type] = (fib_tab[self.calfib_type] - means[None, :])/stds[None, :]
-        return fib_tab
+        return fib_tab, means, stds
     
     def get_fibers(self):
         """
@@ -352,7 +352,7 @@ class Fibers():
         progress = 0
         if self.cov_options['per'] == 'shot':
             if op.exists(pca_path):
-                comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca = self.load_pca(pca_path)
+                comp_all, var_all, var_ratio_all, mean_all, norm_means_all, norm_stds_all, shotids_in_pca = self.load_pca(pca_path)
                 if comp_all.shape[0] != len(self.shotids_list):
                     shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_pca)
                     shotids_remaining = np.sort(shotids_remaining)[::-1]
@@ -365,7 +365,7 @@ class Fibers():
             for i, shotid in enumerate(shotids_remaining):
                 self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
                 if self.normalize:
-                    fib_spec = self.get_normalized_fibers_one_shot(shotid)[self.calfib_type]
+                    fib_spec, norm_means, norm_stds = self.get_normalized_fibers_one_shot(shotid)[self.calfib_type]
                 else:
                     fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
                 if 'comp_all' in locals():
@@ -374,6 +374,12 @@ class Fibers():
                     var_all = np.append(var_all, var[None,:], axis=0)
                     var_ratio_all = np.append(var_ratio_all, var_ratio[None,:], axis=0)
                     mean_all = np.append(mean_all, mean[None,:], axis=0)
+                    if self.normalize:
+                        norm_means_all = np.append(norm_means_all, norm_means[None,:], axis=0)
+                        norm_stds_all = np.append(norm_stds_all, norm_stds[None,:], axis=0)
+                    else:
+                        norm_means_all = [0]
+                        norm_stds_all = [0]
                     shotids_in_pca = np.append(shotids_in_pca, shotid)
                 else:
                     comp_all, var_all, var_ratio_all, mean_all = self.get_pca_one_shot(fib_spec)
@@ -381,12 +387,18 @@ class Fibers():
                     var_all = var_all[None,:]
                     var_ratio_all = var_ratio_all[None,:]
                     mean_all = mean_all[None,:]
+                    if self.normalize:
+                        norm_means_all = norm_means[None,:]
+                        norm_stds_all = norm_stds[None,:]
+                    else:
+                        norm_means_all = [0]
+                        norm_stds_all = [0]
                     shotids_in_pca = np.array([shotid])[None,:]
 
                 if i%10 ==0:
-                    self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca)
+                    self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, norm_means_all, norm_stds_all, shotids_in_pca)
                 progress += 1
-            self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca)
+            self.save_pca(pca_path, comp_all, var_all, var_ratio_all, mean_all, norm_means_all, norm_stds_all, shotids_in_pca)
         else:
             self.logger.error('Currently only per shot covariance is implemented')
             raise NotImplementedError
@@ -427,7 +439,7 @@ class Fibers():
         
         return components, explained_variance, explained_variance_ratio, mean_spectrum
 
-    def save_pca(self, pca_path, comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca):
+    def save_pca(self, pca_path, comp_all, var_all, var_ratio_all, mean_all, norm_means_all, norm_stds_all, shotids_in_pca):
         """
         Save PCA results to disk.
         """
@@ -437,6 +449,8 @@ class Fibers():
             fw['explained_variance'] = var_all
             fw['explained_variance_ratio'] = var_ratio_all
             fw['mean_spectrum'] = mean_all
+            fw['norm_means'] = norm_means_all
+            fw['norm_stds'] = norm_stds_all
             fw['shotid'] = shotids_in_pca
             fw.attrs['masking'] = json.dumps(self.masking)
             fw.attrs['cov_options'] = json.dumps(self.cov_options)
@@ -452,8 +466,10 @@ class Fibers():
                 var_all = f['explained_variance'][:]
                 var_ratio_all = f['explained_variance_ratio'][:]
                 mean_all = f['mean_spectrum'][:]
+                norm_means_all = f['norm_means'][:]
+                norm_stds_all = f['norm_stds'][:]
                 shotids_in_pca = f['shotid'][:]
-            return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca
+            return comp_all, var_all, var_ratio_all, mean_all, norm_means_all, norm_stds_all, shotids_in_pca
         else:
             self.logger.error(f'PCA file {pca_path} does not exist.')
             return None
