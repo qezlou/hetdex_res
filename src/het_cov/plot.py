@@ -8,6 +8,7 @@ from os import path as op
 import sys
 import matplotlib.pyplot as plt
 import json
+from scipy.ndimage import gaussian_filter1d
 
 
 class Plot():
@@ -341,7 +342,7 @@ class PCA():
         ax.grid()
         fig.tight_layout()
 
-    def individual_eigenspectrum(self, n_components=20):
+    def individual_eigenspectrum(self, n_components=20, smoothing=None):
         """
         Plot the first 50 eigen-spectra.
         """
@@ -351,7 +352,11 @@ class PCA():
         rand_shots = np.random.choice(new_shotids_ind, size=3, replace=False)
         for i in rand_shots:
             for c in range(n_components):
-                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], 
+                y = np.sqrt(self.explained_variance[i,c])*self.components[i,c,:]
+                if smoothing is not None:
+                    y = gaussian_filter1d(y,smoothing, mode='constant', cval=0)
+                    
+                ax[c//2, c%2].plot(self.wave, y , 
                                    alpha=0.5, label=self.shotids[i])
                 ax[c//2, c%2].set_title(f'Component {c+1}')
                 ax[c//2, c%2].set_ylim(-0.2, 0.2)
