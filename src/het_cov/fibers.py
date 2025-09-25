@@ -355,6 +355,7 @@ class Fibers():
                 comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca = self.load_pca(pca_path)
                 if comp_all.shape[0] != len(self.shotids_list):
                     shotids_remaining = np.setdiff1d(self.shotids_list, shotids_in_pca)
+                    shotids_remaining = np.sort(shotids_remaining)[::-1]
                     progress = len(shotids_in_pca)
                 else:
                     return comp_all, var_all, var_ratio_all, mean_all, shotids_in_pca

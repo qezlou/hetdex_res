@@ -347,12 +347,14 @@ class PCA():
         """
         # Plot the first 50 components
         fig, ax = plt.subplots(n_components//2, 2, figsize=(12, n_components*1.5))
-        rand_shots = np.random.randint(0, self.shotids.size, size=3)
+        new_shotids_ind = np.where(self.shotids[:]/1e7 > 2017)[0]
+        rand_shots = np.random.choice(new_shotids_ind, size=3, replace=False)
         for i in rand_shots:
             for c in range(n_components):
-                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], alpha=0.5, label=self.shotids[i])
+                ax[c//2, c%2].plot(self.wave, np.sqrt(self.explained_variance[i,c])*self.components[i,c,:], 
+                                   alpha=0.5, label=self.shotids[i])
                 ax[c//2, c%2].set_title(f'Component {c+1}')
-                ax[c//2, c%2].set_ylim(-0.05, 0.1)
+                ax[c//2, c%2].set_ylim(-0.2, 0.2)
                 ax[c//2, c%2].set_xlabel('Wavelength (Å)')
                 ax[c//2, c%2].set_ylabel(r'$v \times V [erg/s/cm^2]$')
                 ax[c//2, c%2].legend(frameon=False)
