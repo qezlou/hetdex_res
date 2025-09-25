@@ -46,9 +46,11 @@ class Fibers():
             "top_percent":5.,
             "top_fiber_frac":0.3
                             
-        })
+            })
         # The calibrated flux to use: `self.calfib_type` or `calfib`
         self.calfib_type = config.get('calfib_type', 'calfib')
+        # Check if we want to normalize the fibers
+        self.normalize = config.get('normalize', False)
         # Load covariance options from config or use defaults
         self.cov_options = config.get('cov_options', {
             'per': 'shot',
@@ -201,6 +203,26 @@ class Fibers():
 
         return fib_tab
 
+    def get_normalized_fibers_one_shot(self, shotid):
+        """
+        Get normalized fiber table for a single shot.
+        I = (I-<I>)(\lambda)/sigma_I(\lambda)
+        Parameters
+        ----------
+        shotid: int
+            Shot ID
+        Returns
+        -------
+        fib_tab: astropy Table
+            Table with fiber_id, self.calfib_type and flag (True for good fibers)
+        """
+        fib_tab = self.get_fibers_one_shot(shotid)
+        # Normalize each fiber by its mean flux value
+        means = np.mean(fib_tab[self.calfib_type], axis=0)
+        stds = np.std(fib_tab[self.calfib_type], axis=0)
+        fib_tab[self.calfib_type] = (fib_tab[self.calfib_type] - means[None, :])/stds[None, :]
+        return fib_tab
+    
     def get_fibers(self):
         """
         Iterate over all shotids and save the `self.calfib_type` spectra
@@ -341,7 +363,10 @@ class Fibers():
             self.logger.info(f'{len(shotids_remaining)} shotids remaining to compute covariance for')
             for i, shotid in enumerate(shotids_remaining):
                 self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
-                fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
+                if self.normalize:
+                    fib_spec = self.get_normalized_fibers_one_shot(shotid)[self.calfib_type]
+                else:
+                    fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
                 if 'comp_all' in locals():
                     comp, var, var_ratio, mean = self.get_pca_one_shot(fib_spec)
                     comp_all = np.append(comp_all, comp[None,:,:], axis=0)
