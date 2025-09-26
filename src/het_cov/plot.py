@@ -433,8 +433,7 @@ class PCA():
         ind_shot = np.where(self.shotids == shotid)[0][0]
 
         # Load the original fiber spectrum and subsample from it
-        orig_fiber_specs, _, _ = fibs.get_fibers_one_shot(shotid)
-        orig_fiber_specs = orig_fiber_specs[fibs.calfib_type]
+        orig_fiber_specs = fibs.get_fibers_one_shot(shotid)[fibs.calfib_type]
         ind_fib = np.random.randint(0, orig_fiber_specs.shape[0], n_fibers)
         orig_fiber_specs = orig_fiber_specs[ind_fib]
 
