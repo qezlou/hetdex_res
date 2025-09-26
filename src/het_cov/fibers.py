@@ -365,7 +365,8 @@ class Fibers():
             for i, shotid in enumerate(shotids_remaining):
                 self.logger.info(f'working on shotid: {shotid}, progress {progress}/{len(self.shotids_list)}')
                 if self.normalize:
-                    fib_spec, norm_means, norm_stds = self.get_normalized_fibers_one_shot(shotid)[self.calfib_type]
+                    fib_spec, norm_means, norm_stds = self.get_normalized_fibers_one_shot(shotid)
+                    fib_spec = fib_spec[self.calfib_type]
                 else:
                     fib_spec = self.get_fibers_one_shot(shotid)[self.calfib_type]
                 if 'comp_all' in locals():
