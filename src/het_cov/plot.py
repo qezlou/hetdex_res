@@ -285,6 +285,8 @@ class PCA():
             self.explained_variance = f['explained_variance'][:]
             self.explained_variance_ratio = f['explained_variance_ratio'][:]
             self.mean = f['mean_spectrum'][:]
+            self.norm_means = f['norm_means'][:]
+            self.norm_stds = f['norm_stds'][:]
             self.shotids = f['shotid'][:]
         # Load the config file used to generate the PCA results
         with open(config_file, 'r') as f:
@@ -390,11 +392,18 @@ class PCA():
         # Center the input spectrum by subtracting the mean spectrum
         centered_spectrum = spectrum - self.mean[ind_shot]
 
+        # The scaling
+        centered_spectrum -= self.norm_means[ind_shot]
+        centered_spectrum /= self.norm_stds[ind_shot]
+
         # Project onto the first n_components PCA components
         projection = centered_spectrum @ self.components[ind_shot, :n_components].T
 
         # Reconstruct the spectrum from the projection
-        reconstructed_spectrum = projection @ self.components[ind_shot, :n_components] + self.mean[ind_shot]
+        reconstructed_spectrum = projection @ self.components[ind_shot, :n_components]
+        reconstructed_spectrum *= self.norm_stds[ind_shot]
+        reconstructed_spectrum += self.norm_means[ind_shot]
+        reconstructed_spectrum += self.mean[ind_shot]
 
         return reconstructed_spectrum
 
