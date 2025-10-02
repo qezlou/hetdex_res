@@ -502,6 +502,77 @@ class Fibers():
         
         return cov_matrices, shotids_in_pca
 
+    def get_flux_distribution_one_shot(self, shotid):
+        """
+        Get the flux distribution for a single shot
+        Parameters
+        ----------
+        shotid: int
+            Shot ID
+        Returns
+        -------
+        flux_dist: np.ndarray, shape (N_wavelengths, N_bins)
+            Flux distribution histogram for each wavelength
+        bins: np.ndarray, shape (N_bins+1,)
+            Bin edges for the histogram
+        """
+        bins = np.linspace(-4, 4, 1000)
+        fib_tab = self.get_fibers_one_shot(shotid)
+        # Compute histogram for each wavelength (column) across all fibers (rows)
+        n_bins = len(bins) - 1
+        n_wavelengths = fib_tab[self.calfib_type].shape[1]
+        flux_dist = np.zeros((n_wavelengths, n_bins))
+        for i in range(n_wavelengths):
+            flux_dist[i], _ = np.histogram(fib_tab[self.calfib_type][:, i], bins=bins, density=False)
+        return flux_dist, bins
+
+    def get_flux_distribution(self, save_file='flux_dist.h5'):
+        """
+        Iterate over all shotids and compute the flux distribution
+        for the `self.calfib_type` spectra and save it in a separate h5 file.
+        """
+        save_file = op.join(self.save_dir, save_file)
+        if op.exists(save_file):
+            with h5py.File(save_file, 'r') as f:
+                existing_shotids = f['shotid'][:]
+            remaining_shotids = np.setdiff1d(self.shotids_list, existing_shotids)[::-1]
+            if len(remaining_shotids) == 0:
+                self.logger.info(f'All shotids already processed in {save_file}.')
+                return
+            else:
+                self.logger.info(f'{len(remaining_shotids)} shotids remaining to compute flux distribution for.')
+        else:
+            remaining_shotids = self.shotids_list
+        flux_dist_all = []
+        # Reverse order to start from the latest shotid
+        for c, shotid in enumerate(remaining_shotids):  
+            self.logger.info(f'working on shotid: {shotid}')
+            flux_dist, bins = self.get_flux_distribution_one_shot(shotid)
+            flux_dist_all.append(flux_dist)
+
+            if c%10 ==0:
+                self.logger.info(f'progress {c}/{len(remaining_shotids)}')
+                if op.exists(save_file):
+                    self.logger.info(f'File {save_file} already exists. Appending new data.')
+                    with h5py.File(save_file, 'a') as fw:
+                        if 'flux_dist' in fw:
+                            existing_data = fw['flux_dist'][:]
+                            combined_data = np.vstack([existing_data, np.array(flux_dist_all)])
+                            del fw['flux_dist']
+                            fw.create_dataset('flux_dist', data=combined_data)
+                        else:
+                            fw.create_dataset('flux_dist', data=np.array(flux_dist_all))
+
+                        if 'bins' not in fw:
+                            fw.create_dataset('bins', data=bins)
+                else:
+                    self.logger.info(f'Saving flux distribution to {save_file}.')
+
+                    with h5py.File(op.join(self.save_dir, save_file), 'w') as fw:
+                        fw['flux_dist'] = flux_dist_all
+                        fw['bins'] = bins
+                        fw['shotid'] = remaining_shotids[0:c]
+
 
 class dustin_extra_residual_cleaning():
     def __init__(self):
