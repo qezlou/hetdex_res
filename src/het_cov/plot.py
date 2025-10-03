@@ -7,8 +7,11 @@ import numpy as np
 from os import path as op
 import sys
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
 import json
 from scipy.ndimage import gaussian_filter1d
+from scipy.stats import norm
 
 
 class Plot():
@@ -334,11 +337,12 @@ class PCA():
         """
         Plot the explained variance ratio.
         """
-        fig, ax = plt.subplots(figsize=(3,4))
+        fig, ax = plt.subplots(figsize=(4,4))
+        x = np.arange(1, self.explained_variance_ratio.shape[1]+1)/self.wave.size
         for i in range(self.explained_variance_ratio.shape[0]):
-            ax.plot(np.arange(1, self.explained_variance_ratio.shape[1]+1), 
-                    np.cumsum(self.explained_variance_ratio[i,:]))
-        ax.set_xlabel('Number of Components')
+            ax.plot(x, np.cumsum(self.explained_variance_ratio[i,:]))
+        ax.plot(x, x, 'k--')
+        ax.set_xlabel('Number of Components / Number of Pixels')
         ax.set_ylabel('Cumulative Var ratio')
         ax.set_title('var ratio')
         ax.grid()
@@ -349,7 +353,7 @@ class PCA():
         Plot the first 50 eigen-spectra.
         """
         # Plot the first 50 components
-        fig, ax = plt.subplots(n_components//2, 2, figsize=(12, n_components*1.5))
+        fig, ax = plt.subplots(n_components//2, 2, figsize=(16, n_components*1.5))
         new_shotids_ind = np.where(self.shotids[:]/1e7 > min_shotid)[0]
         rand_shots = np.random.choice(new_shotids_ind, size=3, replace=False)
         for i in rand_shots:
@@ -359,12 +363,13 @@ class PCA():
                     y = gaussian_filter1d(y,smoothing, mode='constant', cval=0)
                     
                 ax[c//2, c%2].plot(self.wave, y , 
-                                   alpha=0.5, label=self.shotids[i])
+                                   alpha=0.4, label=self.shotids[i])
                 ax[c//2, c%2].set_title(f'Component {c+1}')
                 ax[c//2, c%2].set_ylim(-0.2, 0.2)
                 ax[c//2, c%2].set_xlabel('Wavelength (Å)')
-                ax[c//2, c%2].set_ylabel(r'$v \times V [erg/s/cm^2]$')
+                ax[c//2, c%2].set_ylabel(r'$v \times \hat{e} [erg/s/cm^2]$')
                 ax[c//2, c%2].legend(frameon=False)
+                ax[c//2, c%2].grid()
         fig.tight_layout()
 
     
@@ -642,3 +647,59 @@ class PCA():
         # Adjust layout to make room for colorbars
         plt.subplots_adjust(right=0.9, hspace=0.3, wspace=0.3)
         
+    
+
+class Fdist():
+    """
+    Class to handle flux distribution data.
+    """
+    def __init__(self, data_dir='/home/qezlou/HD1/data_het/data/emmission/', flux_dist_file='flux_dist.h5', logging_level='INFO'):
+        self.logger = self.configure_logging(logging_level=logging_level, logger_name='plot.PCA.flux_fdist')
+        self.data_dir = data_dir
+        with h5py.File(f'{data_dir}/wave.h5', 'r') as f:
+            self.wave = f['wave'][:]
+        self.load_flux_distribution(flux_dist_file)
+
+    def load_flux_distribution(self, flux_dist_file):
+        """
+        Load the flux distribution from a file.
+
+        Parameters
+        ----------
+        flux_dist_file: str
+            Path to the flux distribution file.
+        """
+        with h5py.File(flux_dist_file, 'r') as f:
+            self.flux_dist = f['flux_dist'][:]
+            self.bins = f['bins'][:]
+            self.shotids_flux_dist = f['shotid'][:]
+        self.logger.info(f'Loaded flux distribution from {flux_dist_file} with shape {self.flux_dist.shape}.')
+
+
+    def fit_gaussian_to_flux_dist_one_shot(self, fdist):
+        """
+        Fit a Gaussian to the flux distribution for each wavelength.
+
+        Returns
+        -------
+        means: np.ndarray, shape (N_wavelengths,)
+            Mean of the fitted Gaussian for each wavelength.
+        stds: np.ndarray, shape (N_wavelengths,)
+            Standard deviation of the fitted Gaussian for each wavelength.
+        """
+        n_wavelengths = fdist.shape[0]
+        means = np.zeros(n_wavelengths)
+        stds = np.zeros(n_wavelengths)
+        bin_centers = 0.5 * (self.bins[:-1] + self.bins[1:])
+        for i in range(n_wavelengths):
+            try:
+                mu, std = norm.fit(bin_centers, floc=0, fscale=1, weights=fdist[i])
+                means[i] = mu
+                stds[i] = std
+            except Exception as e:
+                self.logger.warning(f'Gaussian fit failed for wavelength index {i} with error: {e}')
+                means[i] = np.nan
+                stds[i] = np.nan
+        return means, stds
+
+

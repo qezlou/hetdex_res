@@ -1,0 +1,16 @@
+{ "masking":{
+    "bad_fibers": true,
+    "bad_pixels": true,
+    "strong_continuum": true,
+    "top_varying_pixels": false,
+    "top_percent": 5.0,
+    "top_fiber_frac":0.3
+    },
+    "cov_options": {
+        "per": "shot",
+        "method": "full",
+        "l": 100
+    },
+    "calfib_type": "calfib",
+    "normalize": true       
+}

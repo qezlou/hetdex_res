@@ -9,4 +9,4 @@
 
 hostname; pwd; date
 
-python get_cov.py --config pca_calfib_norm.json
+python get_cov.py --config full_calfib.json
