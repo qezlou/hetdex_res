@@ -563,7 +563,7 @@ class PCA():
             # Show images with wavelength-scaled axes using 'extent'
             im0 = ax[i, 0].imshow(cov[ :, :], origin='lower', cmap='viridis',
                                 aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
-            im1 = ax[i, 1].imshow(corr[:, :], origin='lower', cmap='viridis', vmin=0, vmax=1,
+            im1 = ax[i, 1].imshow(corr[:, :], origin='lower', cmap='viridis', #vmin=0, vmax=1,
                                 aspect='auto', extent=[self.wave[0], self.wave[-1], self.wave[0], self.wave[-1]])
             ax[i, 2].plot(self.wave, np.diag(cov), label='Cov diag', alpha=0.7)
             ax[i, 2].set_title(f'{shotids[ind]}-Cov Diagonal')
