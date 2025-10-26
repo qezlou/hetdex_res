@@ -139,7 +139,7 @@ class Fibers():
         fib_tab[self.calfib_type][:, top_varying_pixels] = np.median(fib_tab[self.calfib_type], axis=1)[:, None]
         return fib_tab
 
-    def get_fibers_one_shot(self, shotid):
+    def get_fibers_one_shot(self, shotid, keep_calfibe=False):
         """
         Get fiber table for a single shot
         Parameters
@@ -170,7 +170,8 @@ class Fibers():
             # when working on a probabilistic model
             mask_bad_pixs = fib_tab['calfibe'] <= 0
             fib_tab[self.calfib_type][mask_bad_pixs] = np.median(fib_tab[self.calfib_type][~mask_bad_pixs], axis=0)
-            fib_tab.remove_column('calfibe')
+            if not keep_calfibe:
+                fib_tab.remove_column('calfibe')
             self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab[self.calfib_type].size}")
             del mask_bad_pixs
         
