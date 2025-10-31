@@ -149,6 +149,14 @@ if __name__ == "__main__":
     # data loaders
     trainloader = instrument.get_data_loader(args.dir, which="train", batch_size=args.batch_size)
     validloader = instrument.get_data_loader(args.dir, which="valid", batch_size=args.batch_size)
+    
+    print(f"Train loader: {len(trainloader.dataset)} samples, "
+        f"batch size = {trainloader.batch_size}, "
+        f"num_batches = {len(trainloader)}")
+
+    print(f"Valid loader: {len(validloader.dataset)} samples, "
+        f"batch size = {validloader.batch_size}, "
+        f"num_batches = {len(validloader)}")
 
     if args.verbose:
         print ("Observed frame:\t{:.0f} .. {:.0f} A ({} bins)".format(instrument.wave_obs.min(), instrument.wave_obs.max(), len(instrument.wave_obs)))

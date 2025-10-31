@@ -6,5 +6,4 @@
 #SBATCH --time=1:00:00
 
 
-# Launch with accelerate (8 GPUs)
-accelerate launch  train_hetdex.py /scratch/06536/qezlou/hetdex/data/ /scratch/06536/qezlou/hetdex/data/models/out.pt -v
+accelerate launch  train_hetdex.py /scratch/06536/qezlou/hetdex/data/ /scratch/06536/qezlou/hetdex/data/models/out.pt -v -b 1024 -e 2
