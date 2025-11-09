@@ -184,6 +184,7 @@ class Fibers():
             to_do_shotids = self.shotids_list[self.shotids_list < last_shotid]
         else:
             existing_fnames = []
+            done_shotids =[]
             to_do_shotids = self.shotids_list
         # Make sure to start from the latest dateshots
         to_do_shotids = np.sort(to_do_shotids)[::-1]
@@ -282,7 +283,8 @@ class Fibers():
                     
             done_shotids = np.array(done_shotids)
             self.logger.info(f'Found existing data for {len(set(done_shotids))} shotids. Skipping these.')
-            to_do_shotids = np.setdiff1d(self.shotids_list, done_shotids)
+            last_shotid = np.min(done_shotids)
+            to_do_shotids = self.shotids_list[self.shotids_list < last_shotid]
         else:
             existing_fnames = []
             done_shotids =[]
@@ -351,7 +353,11 @@ class Fibers():
                                                 verbose=False, add_rescor=False)
         F = FiberIndex(survey='hdr5') 
         fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
-        fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
+        try:
+            fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
+        except Exception as e:
+            self.logger.error(f'Error joining fiber tables for shotid {shotid}: {e}')
+            return Table()
 
         # mask the specified physical fiber
         if fibnum is not None:
@@ -382,6 +388,8 @@ class Fibers():
         """
         # 1. Load the fluxes, "self.calfib_type", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
         fib_tab = self.get_fib_tab(shotid, full_table=full_table, multiframe=multiframe, fibnum=fibnum, amp=amp)
+        if len(fib_tab) ==0:
+            return fib_tab
 
         # 2. Only keep good fibers, flag=True
         self.logger.debug(f'Total fibers: {len(fib_tab)}')

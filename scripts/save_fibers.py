@@ -55,7 +55,8 @@ def run_mode(cat='phys-fiber'):
         fibs.get_spectra_one_physical_fiber(ifuslot, fibnum, multiframe)
     elif cat == 'amp':
         fibs.get_spectra_one_amp(amp=amp)
-
+    else:
+        raise ValueError("cat must be 'phys-fiber' or 'amp'")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute covariance matrices using a JSON config file.")
     parser.add_argument('--cat', type=str, required=True, help="")
