@@ -16,7 +16,7 @@ import logging
 import sys
 from sklearn.decomposition import PCA
 import json
-
+import re
 
 class Fibers():
     """
@@ -139,7 +139,236 @@ class Fibers():
         fib_tab[self.calfib_type][:, top_varying_pixels] = np.median(fib_tab[self.calfib_type], axis=1)[:, None]
         return fib_tab
 
-    def get_fibers_one_shot(self, shotid, keep_calfibe=False):
+    
+    def get_spectra_one_amp(self, amp):
+        """
+        Get fiber spectra for a single physical fiber across all shots.
+        Each shot has 3 dithers (expnum = 1, 2, 3).
+
+        Parameters
+        ----------
+        ifuslot : str
+            IFU slot identifier (e.g., '034')
+        fibnum : int
+            Fiber number within IFU (1–448)
+        multiframe : str
+            Multiframe identifier (e.g., '034A')
+
+        Returns
+        -------
+        fib_spec : np.ndarray
+            Array with shape (N_shots, 3, N_wavelengths)
+            calfib spectra for this fiber across all shots and dithers
+        fib_err : np.ndarray
+            Array with same shape for calfibe (errors)
+        shotids : list[int]
+            List of shots used in the extraction
+        """
+        all_specs = []
+        all_errs = []
+        valid_shots = []
+        all_exp_num = []
+        self.logger.info(f'Getting spectra for amp = {amp} ')
+
+        save_file = op.join(self.data_dir, f'amp_fibs_{amp}')
+        existing_fnames = glob(save_file + '*.h5')
+        if len(existing_fnames) > 0:
+            done_shotids = []
+            for fname in existing_fnames:
+                with h5py.File(fname, 'r') as fr:
+                    done_shotids.extend(fr['shotids'][:])
+                    
+            done_shotids = np.array(done_shotids)
+            self.logger.info(f'Found existing data for {len(set(done_shotids))} shotids. Skipping these.')
+            last_shotid = np.min(done_shotids)
+            to_do_shotids = self.shotids_list[self.shotids_list < last_shotid]
+        else:
+            existing_fnames = []
+            to_do_shotids = self.shotids_list
+        # Make sure to start from the latest dateshots
+        to_do_shotids = np.sort(to_do_shotids)[::-1]
+        done_shotids_counter = 0
+        for c, shotid in enumerate(to_do_shotids):
+            fib_tab = self.get_fibers_one_shot(shotid, amp=amp, keep_calfibe=True, full_table=True)
+
+
+            # mask the specified physical fiber
+            mask = (
+                (fib_tab['amp'] == amp)
+            #    & (fib_tab['multiframe'] == multiframe.encode())
+            )
+            rows = fib_tab[mask]
+
+            # expect up to 3 dithers (expnum = 1,2,3)
+            if len(rows) == 0:
+                self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} spectra.')
+                continue
+
+            # sort by dither order for consistency
+            rows.sort('expnum')
+
+            # stack 1D spectra into array of shape (3, N_wave)
+            calfib = np.vstack(rows['calfib'])
+            calfibe = np.vstack(rows['calfibe'])
+
+            all_specs.append(calfib)
+            all_errs.append(calfibe)
+            valid_shots.extend([shotid]*len(rows))
+            all_exp_num.extend(rows['expnum'].tolist())
+            self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} spectra')
+            done_shotids_counter +=1
+
+        
+            # Save every 50 valid shots
+            if (done_shotids_counter %50)==0 and done_shotids_counter>0:
+                self.logger.info(f'Chunk  {c}/{len(to_do_shotids)} shotids for physical fiber {amp}')
+                with h5py.File(save_file + f'_c{c+len(done_shotids)}.h5', 'w') as fw:
+                    # convert list of (3, N_wave) arrays → (N_shots, 3, N_wave)
+                    fw['calfib'] = np.vstack(all_specs)
+                    fw['calfibe'] = np.vstack(all_errs)
+                    fw['shotids'] = valid_shots
+                    fw['expnum'] = all_exp_num
+                all_specs = []
+                all_errs = []
+                valid_shots = []
+                all_exp_num = []
+        if len(all_specs) > 0:
+            with h5py.File(save_file + f'_c{c+len(existing_fnames)}.h5', 'w') as fw:
+                # convert list of (3, N_wave) arrays → (N_shots, 3, N_wave)
+                fw['calfib'] = np.vstack(all_specs)
+                fw['calfibe'] = np.vstack(all_errs)
+                fw['shotids'] = valid_shots
+                fw['expnum'] = all_exp_num
+
+
+
+    def get_spectra_one_physical_fiber(self, ifuslot, fibnum, multiframe):
+        """
+        Get fiber spectra for a single physical fiber across all shots.
+        Each shot has 3 dithers (expnum = 1, 2, 3).
+
+        Parameters
+        ----------
+        ifuslot : str
+            IFU slot identifier (e.g., '034')
+        fibnum : int
+            Fiber number within IFU (1–448)
+        multiframe : str
+            Multiframe identifier (e.g., '034A')
+
+        Returns
+        -------
+        fib_spec : np.ndarray
+            Array with shape (N_shots, 3, N_wavelengths)
+            calfib spectra for this fiber across all shots and dithers
+        fib_err : np.ndarray
+            Array with same shape for calfibe (errors)
+        shotids : list[int]
+            List of shots used in the extraction
+        """
+        all_specs = []
+        all_errs = []
+        valid_shots = []
+        all_exp_num = []
+        self.logger.info(f'Getting spectra for physical fiber: ifuslot :{ifuslot}, fibnum: {fibnum}, multiframe:{multiframe} ')
+
+        save_file = op.join(self.data_dir, f'phys_fib_{ifuslot}_{fibnum}_{multiframe}')
+        existing_fnames = glob(save_file + '*.h5')
+        if len(existing_fnames) > 0:
+            done_shotids = []
+            for fname in existing_fnames:
+                with h5py.File(fname, 'r') as fr:
+                    done_shotids.extend(fr['shotids'][:])
+                    
+            done_shotids = np.array(done_shotids)
+            self.logger.info(f'Found existing data for {len(set(done_shotids))} shotids. Skipping these.')
+            to_do_shotids = np.setdiff1d(self.shotids_list, done_shotids)
+        else:
+            existing_fnames = []
+            done_shotids =[]
+            to_do_shotids = self.shotids_list
+        # Make sure to start from the latest dateshots
+        to_do_shotids = np.sort(to_do_shotids)[::-1]
+        done_shotids_counter = 0
+        for c, shotid in enumerate(to_do_shotids):
+            rows = self.get_fibers_one_shot(shotid, multiframe=multiframe, fibnum=fibnum, keep_calfibe=True, full_table=True)
+
+            # expect up to 3 dithers (expnum = 1,2,3)
+            if len(rows) == 0:
+                self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} dithers.')
+                continue
+
+            # sort by dither order for consistency
+            rows.sort('expnum')
+
+            # stack 1D spectra into array of shape (3, N_wave)
+            calfib = np.vstack(rows['calfib'])
+            calfibe = np.vstack(rows['calfibe'])
+
+            all_specs.append(calfib)
+            all_errs.append(calfibe)
+            valid_shots.extend([shotid]*len(rows))
+            all_exp_num.extend(rows['expnum'].tolist())
+            self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} dithers.')
+            done_shotids_counter +=1
+
+        
+            # Save every 50 valid shots
+            if (done_shotids_counter %50)==0 and done_shotids_counter>0:
+                self.logger.info(f'Chunk  {c}/{len(to_do_shotids)} shotids for physical fiber {ifuslot}_{fibnum}_{multiframe}')
+                with h5py.File(save_file + f'_c{c+len(done_shotids)}.h5', 'w') as fw:
+                    # convert list of (3, N_wave) arrays → (N_shots, 3, N_wave)
+                    fw['calfib'] = np.vstack(all_specs)
+                    fw['calfibe'] = np.vstack(all_errs)
+                    fw['shotids'] = valid_shots
+                    fw['expnum'] = all_exp_num
+                all_specs = []
+                all_errs = []
+                valid_shots = []
+                all_exp_num = []
+        if len(all_specs) > 0:
+            with h5py.File(save_file + f'_c{c+len(existing_fnames)}.h5', 'w') as fw:
+                # convert list of (3, N_wave) arrays → (N_shots, 3, N_wave)
+                fw['calfib'] = np.vstack(all_specs)
+                fw['calfibe'] = np.vstack(all_errs)
+                fw['shotids'] = valid_shots
+                fw['expnum'] = all_exp_num
+
+    def get_fib_tab(self, shotid, full_table=False, multiframe=None, fibnum=None, amp=None):
+        """
+        Use this to get fibers with masks either on  multiframe fibnum or amp or nothing.
+        """
+        
+        # 1. Load the fluxes, "self.calfib_type", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
+        if not full_table:
+            keys_to_query = ['fiber_id', self.calfib_type, 'calfibe']
+            fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',
+                                                verbose=False, add_rescor=False)[keys_to_query]
+        
+        else: 
+            fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',
+                                                multiframe=multiframe,
+                                                verbose=False, add_rescor=False)
+        F = FiberIndex(survey='hdr5') 
+        fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
+        fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
+
+        # mask the specified physical fiber
+        if fibnum is not None:
+            mask = (
+                (fib_tab['fibnum'] == fibnum)
+                )
+            fib_tab = fib_tab[mask]
+        elif amp is not None:
+            mask = (
+                (fib_tab['amp'] == amp)
+                )
+            fib_tab = fib_tab[mask]
+        
+        return fib_tab
+
+
+    def get_fibers_one_shot(self, shotid, keep_calfibe=False, full_table=False, multiframe=None, fibnum=None, amp=None):
         """
         Get fiber table for a single shot
         Parameters
@@ -152,14 +381,10 @@ class Fibers():
             Table with fiber_id, self.calfib_type and flag (True for good fibers)
         """
         # 1. Load the fluxes, "self.calfib_type", "fiber_id" to cross match for flags and "calfibe" to find bad fibers
-        keys_to_query = ['fiber_id', self.calfib_type, 'calfibe']
-        fibtable_one_shot = get_fibers_table(shot=shotid, survey='hdr5',
-                                             verbose=False, add_rescor=False)[keys_to_query]
-        F = FiberIndex(survey='hdr5') 
-        fib_tab_findex = F.return_shot( shotid)['fiber_id','flag']
-        fib_tab= join(fibtable_one_shot, fib_tab_findex, "fiber_id" )
+        fib_tab = self.get_fib_tab(shotid, full_table=full_table, multiframe=multiframe, fibnum=fibnum, amp=amp)
+
         # 2. Only keep good fibers, flag=True
-        self.logger.info(f'Total fibers: {len(fib_tab)}')
+        self.logger.debug(f'Total fibers: {len(fib_tab)}')
         fib_tab = fib_tab[fib_tab['flag']==True]
 
         if self.masking['bad_pixels']:
@@ -172,7 +397,7 @@ class Fibers():
             fib_tab[self.calfib_type][mask_bad_pixs] = np.median(fib_tab[self.calfib_type][~mask_bad_pixs], axis=0)
             if not keep_calfibe:
                 fib_tab.remove_column('calfibe')
-            self.logger.info(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab[self.calfib_type].size}")
+            self.logger.debug(f"Good fibers: {len(fib_tab)}, Fraction of good pixels {1 - np.sum(mask_bad_pixs)/fib_tab[self.calfib_type].size}")
             del mask_bad_pixs
         
         if self.masking['strong_continuum']:
@@ -194,7 +419,7 @@ class Fibers():
             valid_mask = np.ones(medians.shape[1], dtype=bool)
             for i, ub in enumerate(upper_bounds):
                 valid_mask &= (medians[i] > lower_bound) & (medians[i] < ub)
-            self.logger.info(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
+            self.logger.debug(f' Remaining fraction after removing continuum sources {np.sum(valid_mask)/len(fib_tab)} ')
             fib_tab = fib_tab[valid_mask]
             del medians, valid_mask
 
@@ -224,15 +449,23 @@ class Fibers():
         fib_tab[self.calfib_type] = (fib_tab[self.calfib_type] - means[None, :])/stds[None, :]
         return fib_tab, means, stds
     
-    def get_fibers(self):
+    def get_fibers(self, keep_calfibe=False):
         """
         Iterate over all shotids and save the `self.calfib_type` spectra
         for each shotid in a separate h5 file.
         """
         for shotid in self.shotids_list:
-            fib_tab = self.get_fibers_one_shot(shotid)
-            with h5py.File(op.join(f'{self.calfib_type}_{shotid}.h5'), 'w') as fw:
+            save_file = op.join(self.data_dir, f'{self.calfib_type}_{shotid}.h5')
+            if op.exists(save_file):
+                self.logger.info(f'File {save_file} already exists. Skipping shotid {shotid}.')
+                continue
+            fib_tab = self.get_fibers_one_shot(shotid, keep_calfibe=keep_calfibe)
+            with h5py.File(save_file, 'w') as fw:
+                fw['shotid'] = shotid
                 fw[self.calfib_type] = fib_tab[self.calfib_type]
+                if keep_calfibe:
+                    fw['calfibe'] = fib_tab['calfibe']
+                fw['fiberod']
 
     def get_cov(self, save_file=None):
         """
