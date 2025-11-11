@@ -3,7 +3,8 @@
 #SBATCH -A AST25019
 #SBATCH --nodes=1
 #SBATCH -p gh-dev
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 
+export PYTHONUNBUFFERED=1
 
-accelerate launch  train_hetdex.py /scratch/06536/qezlou/hetdex/data/ /scratch/06536/qezlou/hetdex/data/models/out.pt -v -b 1024 -e 2
+accelerate launch  train_hetdex.py /scratch/06536/qezlou/hetdex/data/  phys_fib_013_10_multi_412_013_043_LL_all.h5 /scratch/06536/qezlou/hetdex/data/models/model_fib_013_10_multi_412_013_043_LL_latents_3.pt -n 3 -b 2048 -v | tee output.log

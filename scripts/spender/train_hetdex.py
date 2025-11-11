@@ -68,8 +68,6 @@ def train(model, instrument, trainloader, validloader, n_epoch=200, n_batch=None
             batch_size = len(batch[0])
             spec, w, z = batch
             loss = model.loss(spec, w, instrument=instrument, z=z)
-            if verbose:
-                print(f'Batch {k}: batch_size {batch_size}, Loss {loss.item():.3e}')
             accelerator.backward(loss)
             train_loss += loss.item()
             n_sample += batch_size
@@ -117,6 +115,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("dir", help="data file directory")
+    parser.add_argument("spec_file", help='fiber spectra file to use')
     parser.add_argument("outfile", help="output file name")
     parser.add_argument("-n", "--latents", help="latent dimensionality", type=int, default=2)
     parser.add_argument("-b", "--batch_size", help="batch size", type=int, default=1024)
@@ -137,18 +136,19 @@ if __name__ == "__main__":
         lsf = None
 
     # define HETDEX instrument
-    instrument = HETDEX(lsf=lsf)
+    wave_rest = torch.arange(3470, 5542, 2, dtype=torch.float32)
+    instrument = HETDEX(lsf=lsf, wave_obs=wave_rest)
 
     # restframe wavelength for reconstructed spectra
     z_max = 0.5
     lmbda_min = instrument.wave_obs.min()/(1+z_max)
     lmbda_max = instrument.wave_obs.max()
     bins = args.superresolution * int(instrument.wave_obs.shape[0] * (1 + z_max))
-    wave_rest = torch.arange(3470, 5542, 2, dtype=torch.float32)
+    
 
     # data loaders
-    trainloader = instrument.get_data_loader(args.dir, which="train", batch_size=args.batch_size)
-    validloader = instrument.get_data_loader(args.dir, which="valid", batch_size=args.batch_size)
+    trainloader = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size)
+    validloader = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size)
     
     print(f"Train loader: {len(trainloader.dataset)} samples, "
         f"batch size = {trainloader.batch_size}, "
@@ -169,6 +169,11 @@ if __name__ == "__main__":
             n_latent=args.latents,
             act=(SpeculatorActivation(64), SpeculatorActivation(256), SpeculatorActivation(1024), SpeculatorActivation(len(wave_rest), plus_one=True)),
     )
+    print(f'GPU available: {torch.cuda.is_available()}')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    
     if args.verbose:
         print(model)
 
