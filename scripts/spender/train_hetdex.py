@@ -68,7 +68,7 @@ def train(model, instrument, trainloader, validloader, n_epoch=200, n_batch=None
             batch_size = len(batch[0])
             spec, w, z = batch
             loss = model.loss(spec, w, instrument=instrument, z=z)
-            accelerator.backward(loss)
+            accelerator.backward(loss)         
             train_loss += loss.item()
             n_sample += batch_size
             optimizer.step()
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         lsf = None
 
     # define HETDEX instrument
-    wave_rest = torch.arange(3470, 5542, 2, dtype=torch.float32)
+    wave_rest = torch.arange(3600, 5301, 2, dtype=torch.float32)
     instrument = HETDEX(lsf=lsf, wave_obs=wave_rest)
 
     # restframe wavelength for reconstructed spectra
@@ -147,8 +147,8 @@ if __name__ == "__main__":
     
 
     # data loaders
-    trainloader = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size)
-    validloader = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size)
+    trainloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size, seed=42, split_ratio=0.98)
+    validloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size, seed=42, split_ratio=0.98)
     
     print(f"Train loader: {len(trainloader.dataset)} samples, "
         f"batch size = {trainloader.batch_size}, "
@@ -162,13 +162,28 @@ if __name__ == "__main__":
         print ("Observed frame:\t{:.0f} .. {:.0f} A ({} bins)".format(instrument.wave_obs.min(), instrument.wave_obs.max(), len(instrument.wave_obs)))
         #print ("Restframe:\t{:.0f} .. {:.0f} A ({} bins)".format(lmbda_min, lmbda_max, bins))
 
+    #n_hidden = [8, 32, 128]
+    #n_hidden = [8, 32, 128]
     # define and train the model
+    n_hidden = (64, 256, 1024)
+    
+    act = (SpeculatorActivation(n_hidden[0]), 
+           SpeculatorActivation(n_hidden[1]), 
+           SpeculatorActivation(n_hidden[2]), 
+           SpeculatorActivation(len(instrument.wave_obs), plus_one=False))
+            #nn.Identity())
+    
+    #act = (nn.GELU(), 
+    #       nn.GELU(), 
+    #       nn.GELU(), 
+    #       nn.GELU())
+            #nn.Identity()) 
     model = SpectrumAutoencoder(
             instrument,
-            wave_rest,
+            instrument.wave_obs,
+            n_hidden=n_hidden,
             n_latent=args.latents,
-            act=(SpeculatorActivation(64), SpeculatorActivation(256), SpeculatorActivation(1024), SpeculatorActivation(len(wave_rest), plus_one=True)),
-    )
+            act=act)
     print(f'GPU available: {torch.cuda.is_available()}')
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
