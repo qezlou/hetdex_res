@@ -1,17 +1,18 @@
-"""
-Plot spender plots
-"""
 import numpy as np
 from spender import SpectrumAutoencoder, SpeculatorActivation
 import torch
-from matplotlib import pyplot as plt
 import corner
 from spender.data.hetdex import HETDEX
 from spender import SpectrumAutoencoder, SpeculatorActivation
-import umap
+import h5py
+import argparse
 
-class HetSpenderPlot():
 
+class Reconstructor:
+    """
+    For a trained model this module froward path the model on the gien spectra files
+    and saves the reconstructed spectra and latent representations to an output file.
+    """
     def __init__(self, data_dir, spec_file, model_path, wave_obs=None, which='both',frac_each_file=0.2):
         self.data_dir = data_dir
         self.spec_file = spec_file
@@ -19,18 +20,16 @@ class HetSpenderPlot():
         self.model_path = model_path
         self.instrument, self.trainloader, self.validloader = self.load_train_val_data(which=which, frac_each_file=frac_each_file)
         self.model, self.losses = self.load_model(model_path)
-        self.latents_train, self.recon_spectra_train, self.og_spectra_train, self.latents_valid, self.recon_spectra_valid, self.og_spectra_valid = self.reconstruct_spectra()
-
-
+    
     def load_train_val_data(self, wave_obs=None, which='both', frac_each_file=0.2):
 
         instrument = HETDEX(wave_obs=wave_obs)
         if which is not 'both':
-            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="train", batch_size=128, frac_each_file=frac_each_file)
-            validloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="valid", batch_size=128, frac_each_file=frac_each_file)
+            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="train", batch_size=16384, frac_each_file=frac_each_file)
+            validloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="valid", batch_size=16384, frac_each_file=frac_each_file)
             return instrument, trainloader, validloader
         else:
-            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="both", batch_size=128, frac_each_file=frac_each_file)
+            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="both", batch_size=16384, frac_each_file=frac_each_file)
             return instrument, trainloader, None
 
 
@@ -148,41 +147,41 @@ class HetSpenderPlot():
                     valid_recon_spectra.extend(recon_spectra)
                     valid_og_spectra.extend(spec)
                 return np.array(train_latents), np.array(train_recon_spectra), np.array(train_og_spectra), np.array(valid_latents), np.array(valid_recon_spectra), np.array(valid_og_spectra)
-
-    def plot_loss(self):
-        """Plot training and validation loss curves."""
-
-        fig, ax = plt.subplots(figsize=(4, 3))
-        ax.plot(self.losses[:, 0], label="Training Loss")
-        ax.plot(self.losses[:, 1], label="Validation Loss")
-        ax.set_xlabel("Epoch")
-        ax.set_ylabel("Loss")
-        ax.legend()
-
-    def plot_latent_corner(self):
-        """Plot corner plot of latent space.
-
-        """
-
-        fig = corner.corner(self.latents_train, labels=[f"z{i}" for i in range(self.latents_train.shape[1])],
-                            show_titles=True, title_fmt=".2f",
-                            title_kwargs={"fontsize": 12})
-        if self.validloader is not None:
-            corner.corner(self.latents_valid, fig=fig, color='C1', labels=[f"z{i}" for i in range(self.latents_valid.shape[1])],
-                          show_titles=False)
     
-    def plot_latent_umap(self):
-        """Plot UMAP projection of latent space.
+        
+    def save_reconstructions(self, output_file):
+        """Save reconstructed spectra and latent representations to an output file.
 
+        Parameters
+        ----------
+        output_file: str
+            Path to the output .npz file to save reconstructions.
         """
+        
 
-        reducer = umap.UMAP()
-        embedding_train = reducer.fit_transform(self.latents_train)
-        fig, ax = plt.subplots(figsize=(4, 4))
-        ax.scatter(embedding_train[:, 0], embedding_train[:, 1], s=1, label='Train', alpha=0.5)
-        if self.validloader is not None:
-            embedding_valid = reducer.transform(self.latents_valid)
-            ax.scatter(embedding_valid[:, 0], embedding_valid[:, 1], s=1, label='Valid', alpha=0.5)
-        ax.set_xlabel("UMAP 1")
-        ax.set_ylabel("UMAP 2")
-        ax.legend()
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("data_dir", help="data file directory")
+    parser.add_argument("spec_file", help='fiber spectra file to use')
+    parser.add_argument("model_path", help="path to trained model file")
+    parser.add_argument("output_file", help="output file name for reconstructed spectra")
+    parser.add_argument("frac_to_use", help="fraction of data to use from each file", type=float, default=0.1)
+    args = parser.parse_args()
+    reconstructor = Reconstructor(
+        data_dir=args.data_dir,
+        spec_file=args.spec_file,
+        model_path=args.model_path,
+        wave_obs=None,
+        which='both',
+        frac_each_file=args.frac_to_use
+    )
+    latents_train, recon_spectra_train, og_spectra_train, latents_valid, recon_spectra_valid, og_spectra_valid = reconstructor.reconstruct_spectra()
+    with h5py.File(args.output_file, 'w') as f:
+            f.create_dataset('train_latents', data=latents_train)
+            f.create_dataset('train_recon_spectra', data=recon_spectra_train)
+            f.create_dataset('train_og_spectra', data=og_spectra_train)
+            if latents_valid is not None:
+                f.create_dataset('valid_latents', data=latents_valid)
+                f.create_dataset('valid_recon_spectra', data=recon_spectra_valid)
+                f.create_dataset('valid_og_spectra', data=og_spectra_valid)
