@@ -20,6 +20,11 @@ class HetSpenderPlot():
         self.recon_path = op.join(data_dir, 'recon', recon_file)
         self.losses = np.array(torch.load(model_path, map_location="cpu")['losses'])
 
+    def get_latents(self):
+        with h5py.File(self.recon_path, 'r') as f:
+            train_latents = f['train_latents'][:]
+        return train_latents
+
     def plot_loss(self):
         """Plot training and validation loss curves."""
 
@@ -80,8 +85,7 @@ class HetSpenderPlot():
         """Plot UMAP projection of latent space.
 
         """
-        with h5py.File(self.recon_path, 'r') as f:
-            train_latents = f['train_latents'][:]
+        train_latents = self.get_latents()
 
         reducer = umap.UMAP()
         embedding_train = reducer.fit_transform(train_latents)
