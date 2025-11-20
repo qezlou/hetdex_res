@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -A AST25019
+#SBATCH -J amp
+#SBATCH -p vm-small
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --time=48:00:00
+#SBATCH --output=%x-%j.out
+
+hostname; pwd; date
+
+python save_fibers.py --cat amp

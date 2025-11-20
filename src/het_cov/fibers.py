@@ -202,7 +202,7 @@ class Fibers():
 
             # expect up to 3 dithers (expnum = 1,2,3)
             if len(rows) == 0:
-                self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} spectra.')
+                self.logger.info(f'Processed shotid {shotid} for Amp {amp}, counts {len(rows)} spectra.')
                 continue
 
             # sort by dither order for consistency
@@ -216,13 +216,13 @@ class Fibers():
             all_errs.append(calfibe)
             valid_shots.extend([shotid]*len(rows))
             all_exp_num.extend(rows['expnum'].tolist())
-            self.logger.info(f'Processed shotid {shotid} for physical fiber, counts {len(rows)} spectra')
+            self.logger.info(f'Processed shotid {shotid} for Amp {amp}, counts {len(rows)} spectra')
             done_shotids_counter +=1
 
         
             # Save every 50 valid shots
             if (done_shotids_counter %50)==0 and done_shotids_counter>0:
-                self.logger.info(f'Chunk  {c}/{len(to_do_shotids)} shotids for physical fiber {amp}')
+                self.logger.info(f'Chunk  {c}/{len(to_do_shotids)} shotids for Amp {amp}')
                 with h5py.File(save_file + f'_c{c+len(done_shotids)}.h5', 'w') as fw:
                     # convert list of (3, N_wave) arrays → (N_shots, 3, N_wave)
                     fw['calfib'] = np.vstack(all_specs)
