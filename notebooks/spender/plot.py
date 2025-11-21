@@ -3,22 +3,19 @@ Plot spender plots
 """
 import h5py
 import numpy as np
-from spender import SpectrumAutoencoder, SpeculatorActivation
-import torch
 from matplotlib import pyplot as plt
 import corner
-from spender.data.hetdex import HETDEX
-from spender import SpectrumAutoencoder, SpeculatorActivation
-import umap
+import torch
+
 import os.path as op
 
 class HetSpenderPlot():
 
     def __init__(self, data_dir, model_file, recon_file, which='both'):
         self.data_dir = data_dir
-        model_path = op.join(data_dir, 'models', model_file)
+        self.model_file = model_file
         self.recon_path = op.join(data_dir, 'recon', recon_file)
-        self.losses = np.array(torch.load(model_path, map_location="cpu")['losses'])
+        
 
     def get_latents(self):
         with h5py.File(self.recon_path, 'r') as f:
@@ -27,13 +24,16 @@ class HetSpenderPlot():
 
     def plot_loss(self):
         """Plot training and validation loss curves."""
-
+        model_path = op.join(self.data_dir, 'models', self.model_file)
+        self.losses = np.array(torch.load(model_path, map_location="cpu")['losses'])
+        
         fig, ax = plt.subplots(figsize=(4, 3))
         ax.plot(self.losses[:, 0], label="Training Loss")
         ax.plot(self.losses[:, 1], label="Validation Loss")
         ax.set_xlabel("Epoch")
         ax.set_ylabel("Loss")
         ax.legend()
+        ax.set_yscale('log')
 
     def plot_latent_corner(self):
         """Plot corner plot of latent space.
@@ -46,7 +46,7 @@ class HetSpenderPlot():
                             show_titles=True, title_fmt=".2f",
                             title_kwargs={"fontsize": 12})
     
-    def recon_og(self):
+    def recon_og_large_recon(self):
 
         with h5py.File(self.recon_path, 'r') as f:
             og_spectra = f['train_og_spectra'][:]
@@ -80,6 +80,29 @@ class HetSpenderPlot():
             axs.set_ylim((-0.6, 0.6))
             axs.grid(which='both', linestyle='--', alpha=0.8)
             axs.set_xlabel("Wavelength Bin")
+
+    def recon_og_ind(self, ind_to_use):
+
+        with h5py.File(self.recon_path, 'r') as f:
+            og_spectra = f['train_og_spectra'][ind_to_use,:]
+            recon_spectra = f['train_recon_spectra'][ind_to_use,:]
+            print(f'number of spectra: {og_spectra.shape[0]}')
+
+        replace = recon_spectra.shape[0] < 5
+        ind_sel = np.random.choice(ind_to_use.size, size=5, replace=replace)
+
+        
+        for i, ind in enumerate(ind_sel):
+            fig, axs = plt.subplots(1, 1, figsize=(20, 5))
+            axs.plot(og_spectra[ind], label='Original', alpha=0.7)
+            axs.plot(recon_spectra[ind], label='Reconstructed', alpha=0.7)
+            axs.legend(frameon=False)
+            axs.set_ylabel("Flux")
+            axs.set_ylim((-0.6, 0.6))
+            axs.grid(which='both', linestyle='--', alpha=0.8)
+            axs.set_xlabel("Wavelength Bin")
+
+
     
     def latent_umap(self):
         """Plot UMAP projection of latent space.
