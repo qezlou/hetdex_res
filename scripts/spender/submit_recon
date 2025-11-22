@@ -10,7 +10,8 @@ export PYTHONUNBUFFERED=1
 
 # Using one GH node with accelerate
 
-accelerate launch --num_machines 1 recon_spec.py /scratch/06536/qezlou/hetdex/data/ amp_fibs_LL_c*.h5 amp_fibs_LL_c149_latents_5_random_sample_combined.pt recon_amp_fibs_LL_random_sample_combined.h5 0.1
+#accelerate launch --num_machines 1 recon_spec.py /scratch/06536/qezlou/hetdex/data/ amp_fibs_LL_c*.h5 amp_fibs_LL_c149_latents_20_train_val_shuffle.pt recon_amp_fibs_LL_c149_latents_20.h5 0.1
+accelerate launch --num_machines 1 recon_spec.py /scratch/06536/qezlou/hetdex/data/ calfib_20240510*.h5 /scratch/06536/qezlou/hetdex/data/models/calfib_20240510_latents_5.pt recon_calfib_20240510_latents_5.h5 1.0
 
 # Using multiple GH nodes with accelerate
 # This runs, but not sure the logged proch progress shows slow progress

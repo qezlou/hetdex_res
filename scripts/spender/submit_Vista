@@ -1,16 +1,18 @@
 #!/bin/bash
-#SBATCH --job-name=shuffle-split
+#SBATCH --job-name=l156ds
 #SBATCH -A AST25019
 #SBATCH -N 1
 #SBATCH -p gh
-#SBATCH --time=48:00:00
+#SBATCH --time=2:00:00
 
 export PYTHONUNBUFFERED=1
 
 
 # Using one GH node with accelerate
-#accelerate launch --num_machines 1 train_hetdex.py /scratch/06536/qezlou/hetdex/data/  amp_fibs_LL_c149.h5 /scratch/06536/qezlou/hetdex/data/models/amp_fibs_LL_c149_latents_5_train_val_shuffle.pt -n 5 -b 16384 -v
-accelerate launch --num_machines 1 train_hetdex.py /scratch/06536/qezlou/hetdex/data/  amp_fibs_LL_c*.h5 /scratch/06536/qezlou/hetdex/data/models/amp_fibs_LL_c149_latents_5_random_sample_combined.pt -n 5 -b 16384 -v
+#accelerate launch --num_machines 1 train_hetdex.py /scratch/06536/qezlou/hetdex/data/  amp_fibs_LL_c149.h5 /scratch/06536/qezlou/hetdex/data/models/amp_fibs_LL_latents_20_random_sample_combined.pt -n 20 -b 16384 -v
+#accelerate launch --num_machines 1 train_hetdex.py /scratch/06536/qezlou/hetdex/data/  amp_fibs_LL_c*.h5 /scratch/06536/qezlou/hetdex/data/models/amp_fibs_LL_c149_latents_5_all_combined.pt -n 5 -b 2048 -v
+accelerate launch --num_machines 1 train_hetdex.py /scratch/06536/qezlou/hetdex/data/  calfib_20240510*.h5 /scratch/06536/qezlou/hetdex/data/models/calfib_20240510_latents_15.pt -n 15 -b 16384 -f 1.0 -v
+
 
 # Using multiple GH nodes with accelerate
 # This runs, but not sure the logged proch progress shows slow progress

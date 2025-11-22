@@ -119,6 +119,7 @@ if __name__ == "__main__":
     parser.add_argument("outfile", help="output file name")
     parser.add_argument("-n", "--latents", help="latent dimensionality", type=int, default=2)
     parser.add_argument("-b", "--batch_size", help="batch size", type=int, default=1024)
+    parser.add_argument("-f", "--frac_to_use", help="Fraction of data on the file to usee", type=float, default=0.1)
     parser.add_argument("-l", "--batch_number", help="number of batches per epoch", type=int, default=None)
     parser.add_argument("-e", "--epochs", help="number of epochs", type=int, default=200)
     parser.add_argument("-r", "--rate", help="learning rate", type=float, default=1e-3)
@@ -147,8 +148,8 @@ if __name__ == "__main__":
     
 
     # data loaders
-    trainloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size, seed=42, split_ratio=0.98)
-    validloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size, seed=42, split_ratio=0.98)
+    trainloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size, seed=42, split_ratio=0.98, frac_each_file=args.frac_to_use)
+    validloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size, seed=42, split_ratio=0.98, frac_each_file=args.frac_to_use)
     
     print(f"Train loader: {len(trainloader.dataset)} samples, "
         f"batch size = {trainloader.batch_size}, "
