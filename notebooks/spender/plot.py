@@ -6,6 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import corner
 import torch
+import umap
 
 import os.path as op
 
@@ -46,40 +47,61 @@ class HetSpenderPlot():
                             show_titles=True, title_fmt=".2f",
                             title_kwargs={"fontsize": 12})
     
-    def recon_og_large_recon(self):
+    def recon_og_large_recon(self, recon_files=None, n_top=5):
+        if recon_files is None:
+            recon_paths = [self.recon_path]
+        else:
+            recon_paths = [op.join(self.data_dir, 'recon', rf) for rf in recon_files]
 
-        with h5py.File(self.recon_path, 'r') as f:
+        # Load original spectra ONCE (from the first file)
+        with h5py.File(recon_paths[0], 'r') as f:
             og_spectra = f['train_og_spectra'][:]
-            recon_spectra = f['train_recon_spectra'][:]
-            print(f'number of spectra: {og_spectra.shape[0]}')
+        print(f"Number of OG spectra: {og_spectra.shape[0]}")
 
-        #ind_args_sort = np.argsort(np.mean(abs_diff))
-        #ind_sel = ind_args_sort[-5:]  # worst 5 reconstructions
-        # select indices from the top 5% of mean absolute differences
-        threshold = np.percentile(np.abs(recon_spectra), 99)
-        top_inds = np.where(np.abs(recon_spectra) >= threshold)[0]
+        # Load reconstructed spectra from ALL files
+        recon_list = []
+        for path in recon_paths:
+            with h5py.File(path, 'r') as f:
+                recon_list.append(f['train_recon_spectra'][:])
+                print(f"{path}: recon spectra: {f['train_recon_spectra'].shape[0]}")
+
+        # We assume all recon files correspond to same number of samples
+        n = og_spectra.shape[0]
+
+        # Compute threshold based on ANY of the recon sets (use first file)
+        recon_spectra_0 = recon_list[0]
+        threshold = np.percentile(np.abs(recon_spectra_0), 99)
+        top_inds = np.where(np.abs(recon_spectra_0) >= threshold)[0]
 
         if top_inds.size == 0:
-            # fallback: random selection if no indices found (very unlikely)
-            ind_sel = np.random.randint(0, og_spectra.shape[0], size=5)
+            ind_sel = np.random.randint(0, n, size=n_top)
         else:
-            # sample 5 indices from the top set (allow replacement only if fewer than 5)
             replace = top_inds.size < 5
-            ind_sel = np.random.choice(top_inds, size=5, replace=replace)
+            ind_sel = np.random.choice(top_inds, size=n_top, replace=replace)
 
+        # Plot OG + all recon versions for each selected sample
+        for ind in ind_sel:
+            fig, ax = plt.subplots(figsize=(20, 5))
 
-        #ind_sel = np.random.randint(0, og_spectra.shape[0], size=5)
-        
-        
-        for i, ind in enumerate(ind_sel):
-            fig, axs = plt.subplots(1, 1, figsize=(20, 5))
-            axs.plot(og_spectra[ind], label='Original', alpha=0.7)
-            axs.plot(recon_spectra[ind], label='Reconstructed', alpha=0.7)
-            axs.legend(frameon=False)
-            axs.set_ylabel("Flux")
-            axs.set_ylim((-0.6, 0.6))
-            axs.grid(which='both', linestyle='--', alpha=0.8)
-            axs.set_xlabel("Wavelength Bin")
+            # Plot original
+            ax.plot(og_spectra[ind], label="Original", alpha=0.8, linewidth=2)
+
+            # Plot reconstructed versions (one per file)
+            for k, recon_spectra in enumerate(recon_list):
+                ax.plot(
+                    recon_spectra[ind],
+                    label=f"Reconstructed #{k+1}",
+                    alpha=0.6,
+                    lw=4 
+                )
+
+            ax.legend(frameon=False)
+            ax.set_ylabel("Flux")
+            ax.set_ylim((-0.6, 0.6))
+            ax.grid(which='both', linestyle='--', alpha=0.8)
+            ax.set_xlabel("Wavelength Bin")
+            ax.set_title(f"Spectrum index {ind}")
+
 
     def recon_og_ind(self, ind_to_use):
 
@@ -104,17 +126,24 @@ class HetSpenderPlot():
 
 
     
-    def latent_umap(self):
+    def latent_umap(self, frac_sample=1.0):
         """Plot UMAP projection of latent space.
 
         """
-        train_latents = self.get_latents()
+        if frac_sample < 1.0:
+            all_latents = self.get_latents()
+            n_samples = all_latents.shape[0]
+            n_select = int(frac_sample * n_samples)
+            select_inds = np.random.choice(n_samples, size=n_select, replace=False)
+            train_latents = all_latents[select_inds, :]
+        else:
+            train_latents = self.get_latents()
 
         reducer = umap.UMAP()
         embedding_train = reducer.fit_transform(train_latents)
         fig, ax = plt.subplots(figsize=(4, 4))
         ax.scatter(embedding_train[:, 0], embedding_train[:, 1], s=1, label='Train', alpha=0.5)
-        if self.validloader is not None:
+        if hasattr(self, 'latents_valid'):
             embedding_valid = reducer.transform(self.latents_valid)
             ax.scatter(embedding_valid[:, 0], embedding_valid[:, 1], s=1, label='Valid', alpha=0.5)
         ax.set_xlabel("UMAP 1")
