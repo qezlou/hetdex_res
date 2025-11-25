@@ -7,21 +7,47 @@ from matplotlib import pyplot as plt
 import corner
 import torch
 import umap
+from sklearn.preprocessing import LabelEncoder
 
 import os.path as op
 
 class HetSpenderPlot():
 
-    def __init__(self, data_dir, model_file, recon_file, which='both'):
-        self.data_dir = data_dir
-        self.model_file = model_file
-        self.recon_path = op.join(data_dir, 'recon', recon_file)
-        
+    def __init__(self, data_dir, spec_file, model_file, recon_file, which='both'):
 
-    def get_latents(self):
-        with h5py.File(self.recon_path, 'r') as f:
-            train_latents = f['train_latents'][:]
-        return train_latents
+        self.wave = np.arange(3600, 5301, 2)
+        self.data_dir = data_dir
+        self.spec_file = spec_file
+        self.model_file = model_file
+        self.recon_file = recon_file
+        self.og_spec, self.spec_err, self.shotids, self.amps, self.fiber_ids, self.multiframes = self.get_og_spectra()
+        self.latents, self.recon_spec, self.spec_inds = self.get_recon()
+        ind_sort = np.argsort(self.spec_inds)
+        self.latents =  self.latents[ind_sort, :]
+        self.recon_spec = self.recon_spec[ind_sort, :]
+        print(f"Original spectra shape: {self.og_spec.shape}")
+    
+    def get_og_spectra(self):
+        with h5py.File(op.join(self.data_dir, 'fib_spec', self.spec_file), 'r') as f:
+            print(f.keys())
+            spec = f['calfib'][:, 65:916][:]
+            err = f['calfibe'][:, 65:916][:]
+            err[err <= 0] = np.inf  # masked pixels
+            shotids = f['shotids'][:]
+            amps = f['amps'][:]
+            fiber_ids = f['fiber_ids'][:]
+            multiframes = f['multiframes'][:]
+        print(f'unique shotids in og spectra: {np.unique(shotids).size}')
+        return spec, err, shotids, amps, fiber_ids, multiframes
+
+
+    def get_recon(self):
+        with h5py.File(op.join(self.data_dir, 'recon', self.recon_file), 'r') as f:
+            latents = f['latents'][:]
+            recon = f['recon_spectra'][:]
+            spec_inds = f['inds'][:]
+            print(f'saved recon shape: {recon.shape}')
+        return latents, recon, spec_inds
 
     def plot_loss(self):
         """Plot training and validation loss curves."""
@@ -40,89 +66,37 @@ class HetSpenderPlot():
         """Plot corner plot of latent space.
 
         """
-        with h5py.File(self.recon_path, 'r') as f:
-            train_latents = f['train_latents'][:]
-
-        fig = corner.corner(train_latents, labels=[f"z{i}" for i in range(train_latents.shape[1])],
+        le = LabelEncoder()
+        shotid_labels = le.fit_transform(self.shotids)  # self.shotids is array of shotids for self.latents
+        fig = corner.corner(self.latents, labels=[f"z{i}" for i in range(self.latents.shape[1])],
                             show_titles=True, title_fmt=".2f",
-                            title_kwargs={"fontsize": 12})
+                            title_kwargs={"fontsize": 12}, c=shotid_labels)
     
-    def recon_og_large_recon(self, recon_files=None, n_top=5):
-        if recon_files is None:
-            recon_paths = [self.recon_path]
-        else:
-            recon_paths = [op.join(self.data_dir, 'recon', rf) for rf in recon_files]
+        #cbar = plt.colorbar(sc, ax=ax)
+        #cbar.set_label("Shot ID (encoded)")
+    
+    def recon_og_large_recon(self, n_top=5, ind_sel=None):
+        """Plot original and multiple reconstructed spectra for top varying samples.
+        """
+        if ind_sel is None:
+            ind_sel = np.argsort(np.median(self.recon_spec, axis=1))[-n_top:]
 
-        # Load original spectra ONCE (from the first file)
-        with h5py.File(recon_paths[0], 'r') as f:
-            og_spectra = f['train_og_spectra'][:]
-        print(f"Number of OG spectra: {og_spectra.shape[0]}")
-
-        # Load reconstructed spectra from ALL files
-        recon_list = []
-        for path in recon_paths:
-            with h5py.File(path, 'r') as f:
-                recon_list.append(f['train_recon_spectra'][:])
-                print(f"{path}: recon spectra: {f['train_recon_spectra'].shape[0]}")
-
-        # We assume all recon files correspond to same number of samples
-        n = og_spectra.shape[0]
-
-        # Compute threshold based on ANY of the recon sets (use first file)
-        recon_spectra_0 = recon_list[0]
-        threshold = np.percentile(np.abs(recon_spectra_0), 99)
-        top_inds = np.where(np.abs(recon_spectra_0) >= threshold)[0]
-
-        if top_inds.size == 0:
-            ind_sel = np.random.randint(0, n, size=n_top)
-        else:
-            replace = top_inds.size < 5
-            ind_sel = np.random.choice(top_inds, size=n_top, replace=replace)
 
         # Plot OG + all recon versions for each selected sample
         for ind in ind_sel:
             fig, ax = plt.subplots(figsize=(20, 5))
 
             # Plot original
-            ax.plot(og_spectra[ind], label="Original", alpha=0.8, linewidth=2)
-
-            # Plot reconstructed versions (one per file)
-            for k, recon_spectra in enumerate(recon_list):
-                ax.plot(
-                    recon_spectra[ind],
-                    label=f"Reconstructed #{k+1}",
-                    alpha=0.6,
-                    lw=4 
-                )
+            ax.plot(self.wave, self.og_spec[ind,:], label="Original", alpha=0.8, linewidth=2)
+            ax.fill_between(self.wave, self.og_spec[ind,:] - self.spec_err[ind,:], self.og_spec[ind,:] + self.spec_err[ind,:], color='gray', alpha=0.3)
+            ax.plot(self.wave, self.recon_spec[ind,:], label="Reconstructed", alpha=0.7)
 
             ax.legend(frameon=False)
             ax.set_ylabel("Flux")
             ax.set_ylim((-0.6, 0.6))
             ax.grid(which='both', linestyle='--', alpha=0.8)
             ax.set_xlabel("Wavelength Bin")
-            ax.set_title(f"Spectrum index {ind}")
-
-
-    def recon_og_ind(self, ind_to_use):
-
-        with h5py.File(self.recon_path, 'r') as f:
-            og_spectra = f['train_og_spectra'][ind_to_use,:]
-            recon_spectra = f['train_recon_spectra'][ind_to_use,:]
-            print(f'number of spectra: {og_spectra.shape[0]}')
-
-        replace = recon_spectra.shape[0] < 5
-        ind_sel = np.random.choice(ind_to_use.size, size=5, replace=replace)
-
-        
-        for i, ind in enumerate(ind_sel):
-            fig, axs = plt.subplots(1, 1, figsize=(20, 5))
-            axs.plot(og_spectra[ind], label='Original', alpha=0.7)
-            axs.plot(recon_spectra[ind], label='Reconstructed', alpha=0.7)
-            axs.legend(frameon=False)
-            axs.set_ylabel("Flux")
-            axs.set_ylim((-0.6, 0.6))
-            axs.grid(which='both', linestyle='--', alpha=0.8)
-            axs.set_xlabel("Wavelength Bin")
+            ax.set_title(f"fiber_id: {self.fiber_ids[ind]} | array index :{ind}")
 
 
     
@@ -130,22 +104,44 @@ class HetSpenderPlot():
         """Plot UMAP projection of latent space.
 
         """
-        if frac_sample < 1.0:
-            all_latents = self.get_latents()
-            n_samples = all_latents.shape[0]
-            n_select = int(frac_sample * n_samples)
-            select_inds = np.random.choice(n_samples, size=n_select, replace=False)
-            train_latents = all_latents[select_inds, :]
-        else:
-            train_latents = self.get_latents()
 
         reducer = umap.UMAP()
-        embedding_train = reducer.fit_transform(train_latents)
-        fig, ax = plt.subplots(figsize=(4, 4))
-        ax.scatter(embedding_train[:, 0], embedding_train[:, 1], s=1, label='Train', alpha=0.5)
-        if hasattr(self, 'latents_valid'):
-            embedding_valid = reducer.transform(self.latents_valid)
-            ax.scatter(embedding_valid[:, 0], embedding_valid[:, 1], s=1, label='Valid', alpha=0.5)
-        ax.set_xlabel("UMAP 1")
-        ax.set_ylabel("UMAP 2")
-        ax.legend()
+        embedding_train = reducer.fit_transform(self.latents)
+        # encode shotids -> integers -> colormap
+        # Label encode
+        le = LabelEncoder()
+        amp_labels = le.fit_transform(self.amps)  # self.shotids is array of shotids for self.latents
+        le = LabelEncoder()
+        shotid_labels = le.fit_transform(self.shotids)  # self.shotids is array of shotids for self.latents
+
+        # Plot
+        fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+        sc_amps = ax[0].scatter(
+            embedding_train[:, 0],
+            embedding_train[:, 1],
+            s=2,
+            c=shotid_labels,
+            cmap='Spectral',
+            alpha=0.6
+        )
+        cbar = plt.colorbar(sc_amps, ax=ax[0])
+        cbar.set_label("Shot ID (encoded)")
+
+
+        sc_amps = ax[1].scatter(
+            embedding_train[:, 0],
+            embedding_train[:, 1],
+            s=2,
+            c=amp_labels,
+            cmap='Spectral',
+            alpha=0.6
+        )
+        cbar = plt.colorbar(sc_amps, ax=ax[1])
+        cbar.set_label("Amplitude (encoded)")    
+
+        for i in range(2):
+            ax[i].set_xlabel("UMAP 1")
+            ax[i].set_ylabel("UMAP 2")
+            ax[i].set_title("UMAP colored by shotid")
+        
+        fig.tight_layout()
