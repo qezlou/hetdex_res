@@ -78,8 +78,12 @@ class HetSpenderPlot():
     def recon_og_large_recon(self, n_top=5, ind_sel=None):
         """Plot original and multiple reconstructed spectra for top varying samples.
         """
+
         if ind_sel is None:
-            ind_sel = np.argsort(np.median(self.recon_spec, axis=1))[-n_top:]
+            ind_non_zero_og = np.where(~np.all(self.og_spec <=0.01, axis=1))[0]
+            print(f"Number of zero original spectra: {self.og_spec.shape[0] - ind_non_zero_og.size}")
+            ind_sel = np.argsort(np.median(self.recon_spec, axis=1))
+            ind_sel = np.intersect1d(ind_sel, ind_non_zero_og)[-n_top:]
 
 
         # Plot OG + all recon versions for each selected sample
