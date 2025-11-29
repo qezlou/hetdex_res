@@ -66,7 +66,7 @@ def train(model, instrument, trainloader, validloader, n_epoch=200, n_batch=None
         n_sample = 0
         for k, batch in enumerate(trainloader):
             batch_size = len(batch[0])
-            spec, w, z = batch
+            spec, w, z, _ = batch
             loss = model.loss(spec, w, instrument=instrument, z=z)
             accelerator.backward(loss)         
             train_loss += loss.item()
@@ -85,7 +85,7 @@ def train(model, instrument, trainloader, validloader, n_epoch=200, n_batch=None
             n_sample = 0
             for k, batch in enumerate(validloader):
                 batch_size = len(batch[0])
-                spec, w, z = batch
+                spec, w, z, _ = batch
                 loss = model.loss(spec, w, instrument=instrument, z=z)
                 valid_loss += loss.item()
                 n_sample += batch_size
@@ -148,8 +148,8 @@ if __name__ == "__main__":
     
 
     # data loaders
-    trainloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size, seed=42, split_ratio=0.98, frac_each_file=args.frac_to_use)
-    validloader, _ = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size, seed=42, split_ratio=0.98, frac_each_file=args.frac_to_use)
+    trainloader = instrument.get_data_loader(args.dir, args.spec_file, which="train", batch_size=args.batch_size, seed=42, split_ratio=0.98)
+    validloader = instrument.get_data_loader(args.dir, args.spec_file, which="valid", batch_size=args.batch_size, seed=42, split_ratio=0.98)
     
     print(f"Train loader: {len(trainloader.dataset)} samples, "
         f"batch size = {trainloader.batch_size}, "

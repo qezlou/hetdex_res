@@ -14,28 +14,20 @@ class Reconstructor:
     For a trained model this module froward path the model on the gien spectra files
     and saves the reconstructed spectra and latent representations to an output file.
     """
-    def __init__(self, data_dir, spec_file, model_file, wave_obs=None, which='both',frac_each_file=0.2):
+    def __init__(self, data_dir, spec_file, model_file, wave_obs=None, which='both'):
         self.data_dir = data_dir
         self.spec_file = spec_file
         self.wave_obs = wave_obs
         self.model_path = op.join(data_dir, 'models', model_file)
-        self.instrument, self.trainloader, self.validloader = self.load_train_val_data(which=which, frac_each_file=frac_each_file)
+        self.instrument, self.dataloader = self.load_train_val_data()
+        print(f'Loaded data with {len(self.dataloader.dataset)} spectra.')
         self.model, self.losses = self.load_model(self.model_path)
-        self.model, self.trainloader, self.validloader = Accelerator().prepare(self.model, self.trainloader, self.validloader)
+        self.model, self.dataloader = Accelerator().prepare(self.model, self.dataloader)
     
-    def load_train_val_data(self, wave_obs=None, which='both', frac_each_file=0.2):
-
+    def load_train_val_data(self, wave_obs=None):
         instrument = HETDEX(wave_obs=wave_obs)
-        if which is not 'both':
-            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="train", batch_size=16384, frac_each_file=frac_each_file)
-            validloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="valid", batch_size=16384, frac_each_file=frac_each_file)
-            return instrument, trainloader, validloader
-        else:
-            trainloader, _ = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="both", batch_size=16384, frac_each_file=frac_each_file)
-            return instrument, trainloader, None
-
-
-
+        dataloader = instrument.get_data_loader(dir=self.data_dir, file_name=self.spec_file, which="train", batch_size=16384, seed=42, split_ratio=1.0)
+        return instrument, dataloader
 
     def infer_decoder_hyperparams(self, sd):
         """
@@ -117,11 +109,6 @@ class Reconstructor:
         model.to(device)
         return model, ckpt['losses']
 
-    def to_cpu_list(self,x):
-            # x can be a tensor or a list/tuple of tensors
-            if isinstance(x, torch.Tensor):
-                return x.detach().cpu()
-            return [t.detach().cpu() if isinstance(t, torch.Tensor) else t for t in x]
 
     def reconstruct_spectra(self):
         """Reconstruct spectra using the loaded model.
@@ -136,29 +123,28 @@ class Reconstructor:
         recon_spectra: torch.Tensor
             Reconstructed spectra, shape (n_samples, n_wavelengths)
         """
-
-        train_latents, train_recon_spectra, train_og_spectra = [], [], []
-        valid_latents, valid_recon_spectra, valid_og_spectra = [], [], []
-
         with torch.no_grad():
+            all_latents = []
+            all_recon = []
+            all_inds = []
             self.model.eval()
-            for b, batch in enumerate(self.trainloader):
-                spec, w, _ = batch
-                latent, recon_spectra, _, _ = self.model._forward(spec)
-                train_latents.extend(self.to_cpu_list(latent))
-                train_recon_spectra.extend(self.to_cpu_list(recon_spectra))
-                train_og_spectra.extend(self.to_cpu_list(spec))
-            if self.validloader is None:
-                return np.array(train_latents), np.array(train_recon_spectra), np.array(train_og_spectra), None, None, None
-            
-            else:
-                for b, batch in enumerate(self.validloader):
-                    spec, w, _ = batch
-                    latent, recon_spectra, _, _ = self.model._forward(spec)
-                    valid_latents.extend(self.to_cpu_list(latent))
-                    valid_recon_spectra.extend(self.to_cpu_list(recon_spectra))
-                    valid_og_spectra.extend(self.to_cpu_list(spec))
-                return np.array(train_latents), np.array(train_recon_spectra), np.array(train_og_spectra), np.array(valid_latents), np.array(valid_recon_spectra), np.array(valid_og_spectra)
+            for b, batch in enumerate(self.dataloader):
+                print(f'Reconstructing batch {b+1}/{len(self.dataloader)}', flush=True)
+                spec, w,_, ind = batch
+                print(f'Batch spec shape: {spec.shape}', flush=True)
+                latents, recon_spectra, _, _ = self.model._forward(spec)
+                if b == 0:
+                    all_latents = latents.cpu()
+                    all_recon = recon_spectra.cpu()
+                    all_inds = ind.cpu()
+                else:
+                    all_latents = torch.cat((all_latents, latents.cpu()), dim=0)
+                    all_recon = torch.cat((all_recon, recon_spectra.cpu()), dim=0)
+                    all_inds = torch.cat((all_inds, ind.cpu()), dim=0)
+            all_latents = all_latents.numpy()
+            all_recon = all_recon.numpy()
+            all_inds = all_inds.numpy()
+        return all_latents, all_recon, all_inds
         
 
 if __name__ == "__main__":
@@ -168,23 +154,17 @@ if __name__ == "__main__":
     parser.add_argument("spec_file", help='fiber spectra file to use')
     parser.add_argument("model_file", help="path to trained model file")
     parser.add_argument("output_file", help="output file name for reconstructed spectra")
-    parser.add_argument("frac_to_use", help="fraction of data to use from each file", type=float, default=0.1)
     args = parser.parse_args()
     reconstructor = Reconstructor(
         data_dir=args.data_dir,
         spec_file=args.spec_file,
         model_file=args.model_file,
         wave_obs=None,
-        which='both',
-        frac_each_file=args.frac_to_use
+        which='both'
     )
-    latents_train, recon_spectra_train, og_spectra_train, latents_valid, recon_spectra_valid, og_spectra_valid = reconstructor.reconstruct_spectra()
+    latents, recon, inds = reconstructor.reconstruct_spectra()
     out_path = op.join(args.data_dir, 'recon', args.output_file)
     with h5py.File(out_path, 'w') as f:
-            f.create_dataset('train_latents', data=latents_train)
-            f.create_dataset('train_recon_spectra', data=recon_spectra_train)
-            f.create_dataset('train_og_spectra', data=og_spectra_train)
-            if latents_valid is not None:
-                f.create_dataset('valid_latents', data=latents_valid)
-                f.create_dataset('valid_recon_spectra', data=recon_spectra_valid)
-                f.create_dataset('valid_og_spectra', data=og_spectra_valid)
+            f.create_dataset('latents', data=latents)
+            f.create_dataset('recon_spectra', data=recon)
+            f.create_dataset('inds', data=inds)
